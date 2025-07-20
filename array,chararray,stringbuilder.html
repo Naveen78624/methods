@@ -1,0 +1,1510 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Java Arrays, StringBuilder, Character Array Cheat Sheet</title>
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+  <style>
+    /* Define CSS variables for theme colors */
+    :root {
+      --primary: #3498db; /* A more neutral blue */
+      --secondary: #2980b9;
+      --accent: #e74c3c; /* Red for highlights */
+      --light: #f4f7f6; /* Lighter background */
+      --dark: #34495e; /* Darker text */
+      --success: #2ecc71;
+      --warning: #f1c40f;
+      --info: #3498db;
+      --border: #ecf0f1; /* Lighter border */
+      --card-bg: #ffffff;
+      --code-bg: #ecf0f1; /* Light grey for code */
+      --header-bg: #34495e; /* Dark header */
+      --shadow: 0 2px 8px rgba(0, 0, 0, 0.05); /* Lighter shadow */
+      --transition: all 0.2s ease;
+    }
+
+    /* Dark mode specific styles, overriding light mode variables */
+    .dark-mode {
+      --primary: #6cb6ff;
+      --secondary: #569cd6;
+      --accent: #ff7b7b;
+      --light: #1e1e1e; /* Dark background */
+      --dark: #e0e0e0; /* Light text */
+      --card-bg: #252526;
+      --code-bg: #333333;
+      --border: #444444;
+      --header-bg: #2d2d30;
+      --shadow: 0 2px 8px rgba(0, 0, 0, 0.2);
+    }
+
+    /* Universal box-sizing and transition for all elements */
+    * {
+      margin: 0;
+      padding: 0;
+      box-sizing: border-box;
+      transition: var(--transition);
+    }
+
+    /* Body styling for font, background, text color, and layout */
+    body {
+      font-family: 'Inter', 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif; /* Changed font to Inter */
+      background-color: var(--light);
+      color: var(--dark);
+      line-height: 1.6;
+      padding: 20px;
+      max-width: 1200px; /* Slightly narrower content area */
+      margin: 0 auto; /* Center the content */
+    }
+
+    /* Main container for simplified layout */
+    .container {
+      display: block; /* No grid needed, single column */
+      width: 100%;
+    }
+
+    /* Header styling - simplified */
+    header {
+      background: var(--header-bg); /* Solid color, less gradient */
+      color: white;
+      padding: 15px 25px; /* Reduced padding */
+      border-radius: 8px; /* Slightly less rounded */
+      margin-bottom: 25px; /* Reduced margin */
+      box-shadow: var(--shadow);
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+    }
+
+    /* Header content alignment */
+    .header-content {
+      display: flex;
+      align-items: center;
+      gap: 15px; /* Reduced gap */
+    }
+
+    /* Main heading style */
+    h1 {
+      font-size: 2rem; /* Slightly smaller heading */
+      font-weight: 600;
+      margin: 0;
+    }
+
+    /* Tagline text style */
+    .tagline {
+      font-size: 1rem; /* Slightly smaller tagline */
+      opacity: 0.9;
+      margin-top: 5px;
+    }
+
+    /* Logo icon style */
+    .logo {
+      font-size: 2.5rem; /* Slightly smaller logo */
+      color: white;
+    }
+
+    /* Theme toggle button styling - simplified to icon */
+    .theme-toggle {
+      background: none; /* No background */
+      border: 1px solid rgba(255, 255, 255, 0.3); /* Subtle border */
+      color: white;
+      padding: 8px 12px; /* Smaller padding */
+      border-radius: 50%; /* Circular button */
+      cursor: pointer;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-size: 1.2rem; /* Icon size */
+      transition: all 0.3s;
+    }
+
+    /* Theme toggle button hover effect */
+    .theme-toggle:hover {
+      background: rgba(255, 255, 255, 0.1);
+      transform: scale(1.05);
+    }
+
+    /* Main content area grid layout for method cards */
+    .content {
+      display: grid;
+      grid-template-columns: repeat(auto-fill, minmax(300px, 1fr)); /* Even more compact cards */
+      gap: 15px; /* Reduced gap between cards */
+      margin-bottom: 40px;
+    }
+
+    /* Category sections are always active in this simplified layout */
+    .category-section {
+      display: block;
+      grid-column: 1 / -1; /* Span full width */
+      margin-bottom: 30px; /* Space between sections */
+    }
+
+    /* Section header styling */
+    .section-header {
+      display: flex;
+      align-items: center;
+      gap: 12px;
+      margin-bottom: 20px; /* Reduced margin */
+      padding-bottom: 10px; /* Reduced padding */
+      border-bottom: 1px solid var(--border); /* Lighter border */
+    }
+
+    /* Section icon style */
+    .section-icon {
+      font-size: 1.5rem; /* Slightly smaller icon */
+      color: var(--primary);
+    }
+
+    /* Section title style */
+    .section-title {
+      font-size: 1.6rem; /* Slightly smaller title */
+      color: var(--primary);
+    }
+
+    /* Method card styling - simplified */
+    .method-card {
+      background: var(--card-bg);
+      border-radius: 8px; /* Less rounded */
+      box-shadow: var(--shadow);
+      overflow: hidden;
+      transition: transform 0.2s;
+      height: 100%;
+      display: flex;
+      flex-direction: column;
+      border: 1px solid var(--border); /* Added subtle border */
+    }
+
+    /* Method card hover effect */
+    .method-card:hover {
+      transform: translateY(-3px); /* Less dramatic hover */
+      box-shadow: 0 4px 10px rgba(0, 0, 0, 0.08);
+    }
+
+    /* Card header styling - simplified */
+    .card-header {
+      background: none; /* No background color */
+      padding: 12px 15px; /* Reduced padding */
+      border-bottom: 1px dashed var(--border); /* Dashed border for lighter look */
+    }
+
+    /* Method name style (code font) */
+    .method-name {
+      font-family: 'Consolas', 'Courier New', monospace;
+      font-size: 1rem; /* Standard font size */
+      font-weight: 600; /* Slightly lighter font weight */
+      color: var(--dark); /* Darker color for readability */
+      margin-bottom: 3px;
+    }
+
+    /* Method arguments style */
+    .method-args {
+      font-size: 0.85rem; /* Slightly smaller */
+      color: var(--secondary);
+    }
+
+    /* Card body styling */
+    .card-body {
+      padding: 15px;
+      flex-grow: 1;
+    }
+
+    /* Method description style */
+    .method-desc {
+      color: var(--dark);
+      margin-bottom: 10px;
+      line-height: 1.5;
+      font-size: 0.9rem; /* Slightly smaller */
+    }
+
+    /* Card footer styling */
+    .card-footer {
+      padding: 0 15px 15px;
+    }
+
+    /* Example button styling */
+    .example-btn {
+      background: var(--primary);
+      color: white;
+      border: none;
+      padding: 8px 15px; /* Reduced padding */
+      border-radius: 6px; /* Slightly less rounded */
+      cursor: pointer;
+      display: flex;
+      align-items: center;
+      gap: 6px;
+      font-weight: 500; /* Lighter font weight */
+      width: 100%;
+      justify-content: center;
+      transition: background 0.2s;
+    }
+
+    /* Example button hover effect */
+    .example-btn:hover {
+      background: var(--secondary);
+    }
+
+    /* Example code block styling */
+    .example-code {
+      background: var(--code-bg);
+      border-radius: 6px; /* Less rounded */
+      padding: 15px; /* Reduced padding */
+      font-family: 'Consolas', 'Courier New', monospace;
+      font-size: 0.85rem; /* Smaller font size for code */
+      line-height: 1.5;
+      white-space: pre-wrap;
+      margin-top: 10px; /* Reduced margin */
+      display: none;
+      border-left: 3px solid var(--accent); /* Thinner border */
+      overflow-x: auto; /* Allow horizontal scrolling for long lines */
+    }
+
+    /* Show example code when active */
+    .example-code.active {
+      display: block;
+    }
+
+    /* Footer styling */
+    .footer {
+      text-align: center;
+      padding: 20px; /* Reduced padding */
+      margin-top: 25px; /* Reduced margin */
+      border-top: 1px solid var(--border);
+      color: var(--secondary);
+    }
+
+    /* Footer paragraph spacing */
+    .footer p {
+      margin: 3px 0; /* Reduced margin */
+      font-size: 0.9rem;
+    }
+
+    /* Highlighted text style */
+    .highlight {
+      background: rgba(255, 215, 0, 0.1); /* Lighter highlight */
+      padding: 2px 4px;
+      border-radius: 4px;
+      font-weight: 600;
+    }
+
+    /* Responsive adjustments for smaller screens (tablet) */
+    @media (max-width: 900px) {
+      body {
+        padding: 15px;
+      }
+      header {
+        flex-direction: column;
+        text-align: center;
+        gap: 10px;
+        padding: 15px;
+      }
+      .header-content {
+        flex-direction: column;
+        gap: 10px;
+      }
+      .theme-toggle {
+        margin-top: 10px;
+      }
+      .content {
+        grid-template-columns: repeat(auto-fill, minmax(280px, 1fr)); /* Adjust for smaller screens */
+        gap: 15px;
+      }
+      .section-header {
+        flex-direction: column;
+        align-items: flex-start;
+        text-align: left;
+        gap: 8px;
+      }
+      .section-icon {
+        font-size: 1.3rem;
+      }
+      .section-title {
+        font-size: 1.4rem;
+      }
+    }
+
+    /* Responsive adjustments for very small screens (mobile) */
+    @media (max-width: 600px) {
+      body {
+        padding: 10px;
+      }
+      .content {
+        grid-template-columns: 1fr; /* Single column for content */
+        gap: 10px;
+      }
+      .method-card {
+        padding: 10px;
+      }
+      .card-header, .card-body, .card-footer {
+        padding: 10px;
+      }
+      .method-name {
+        font-size: 0.95rem;
+      }
+      .method-desc {
+        font-size: 0.85rem;
+      }
+      .example-code {
+        font-size: 0.8rem;
+      }
+    }
+
+    /* Specific styles for the "Common Operations" section in Character Arrays */
+    .common-operations-list {
+      list-style: none;
+      padding: 0;
+      margin-bottom: 20px;
+      display: grid;
+      grid-template-columns: repeat(auto-fill, minmax(280px, 1fr));
+      gap: 10px;
+    }
+
+    .common-operations-list li {
+      background-color: var(--code-bg);
+      border: 1px solid var(--border);
+      border-left: 3px solid var(--primary);
+      padding: 10px 15px;
+      border-radius: 6px;
+      font-family: 'Consolas', 'Courier New', monospace;
+      font-size: 0.9rem;
+      line-height: 1.4;
+      display: flex;
+      align-items: center;
+      gap: 8px;
+    }
+
+    .common-operations-list li strong {
+      color: var(--primary);
+      font-weight: 600;
+    }
+  </style>
+</head>
+<body>
+  <header>
+    <div class="header-content">
+      <div class="logo">
+        <i class="fas fa-code"></i>
+      </div>
+      <div>
+        <h1>Java Arrays & StringBuilder Cheat Sheet</h1>
+        <p class="tagline">Essential methods for Array, StringBuilder, and Character Array manipulation</p>
+      </div>
+    </div>
+    <button class="theme-toggle" id="themeBtn" aria-label="Toggle dark mode">
+      <i class="fas fa-moon"></i>
+    </button>
+  </header>
+
+  <div class="container">
+    <main class="content">
+      <!-- Java Array Methods (java.util.Arrays Class) Section -->
+      <section class="category-section" id="arrays-methods-section">
+        <div class="section-header">
+          <div class="section-icon">
+            <i class="fas fa-th-list"></i>
+          </div>
+          <h2 class="section-title">Java Array Methods (<code>java.util.Arrays</code> Class)</h2>
+        </div>
+        
+        <div class="method-grid">
+          <div class="method-card">
+            <div class="card-header">
+              <div class="method-name">asList(T... a)</div>
+              <div class="method-args">Arguments: Varargs</div>
+            </div>
+            <div class="card-body">
+              <p class="method-desc">Returns a fixed-size list backed by the specified array.</p>
+            </div>
+            <div class="card-footer">
+              <button class="example-btn">
+                <i class="fas fa-code"></i> Show Example
+              </button>
+              <pre class="example-code">import java.util.Arrays;
+import java.util.List;
+String[] arr = {"apple", "banana"};
+List&lt;String&gt; list = Arrays.asList(arr);
+System.out.println(list); 
+// Output: [apple, banana]</pre>
+            </div>
+          </div>
+
+          <div class="method-card">
+            <div class="card-header">
+              <div class="method-name">binarySearch(array, key)</div>
+              <div class="method-args">Arguments: 2</div>
+            </div>
+            <div class="card-body">
+              <p class="method-desc">Searches for a specified element using the binary search algorithm (requires sorted array).</p>
+            </div>
+            <div class="card-footer">
+              <button class="example-btn">
+                <i class="fas fa-code"></i> Show Example
+              </button>
+              <pre class="example-code">import java.util.Arrays;
+int[] arr = {10, 20, 30, 40, 50};
+int index = Arrays.binarySearch(arr, 30);
+System.out.println(index); 
+// Output: 2</pre>
+            </div>
+          </div>
+
+          <div class="method-card">
+            <div class="card-header">
+              <div class="method-name">compare(array1, array2)</div>
+              <div class="method-args">Arguments: 2</div>
+            </div>
+            <div class="card-body">
+              <p class="method-desc">Lexicographically compares two arrays.</p>
+            </div>
+            <div class="card-footer">
+              <button class="example-btn">
+                <i class="fas fa-code"></i> Show Example
+              </button>
+              <pre class="example-code">import java.util.Arrays;
+int[] arr1 = {1, 2, 3};
+int[] arr2 = {1, 2, 4};
+int result = Arrays.compare(arr1, arr2);
+System.out.println(result); 
+// Output: -1 (arr1 is "less than" arr2)</pre>
+            </div>
+          </div>
+
+          <div class="method-card">
+            <div class="card-header">
+              <div class="method-name">copyOf(original, newLength)</div>
+              <div class="method-args">Arguments: 2</div>
+            </div>
+            <div class="card-body">
+              <p class="method-desc">Copies the specified array, truncating or padding with default values as necessary.</p>
+            </div>
+            <div class="card-footer">
+              <button class="example-btn">
+                <i class="fas fa-code"></i> Show Example
+              </button>
+              <pre class="example-code">import java.util.Arrays;
+int[] original = {1, 2, 3};
+int[] copy = Arrays.copyOf(original, 5);
+System.out.println(Arrays.toString(copy)); 
+// Output: [1, 2, 3, 0, 0]</pre>
+            </div>
+          </div>
+
+          <div class="method-card">
+            <div class="card-header">
+              <div class="method-name">copyOfRange(original, from, to)</div>
+              <div class="method-args">Arguments: 3</div>
+            </div>
+            <div class="card-body">
+              <p class="method-desc">Copies a range of the specified array into a new array.</p>
+            </div>
+            <div class="card-footer">
+              <button class="example-btn">
+                <i class="fas fa-code"></i> Show Example
+              </button>
+              <pre class="example-code">import java.util.Arrays;
+int[] original = {1, 2, 3, 4, 5};
+int[] rangeCopy = Arrays.copyOfRange(original, 1, 4); // indices 1, 2, 3
+System.out.println(Arrays.toString(rangeCopy)); 
+// Output: [2, 3, 4]</pre>
+            </div>
+          </div>
+
+          <div class="method-card">
+            <div class="card-header">
+              <div class="method-name">deepEquals(a1, a2)</div>
+              <div class="method-args">Arguments: 2</div>
+            </div>
+            <div class="card-body">
+              <p class="method-desc">Checks if two multi-dimensional arrays are deeply equal.</p>
+            </div>
+            <div class="card-footer">
+              <button class="example-btn">
+                <i class="fas fa-code"></i> Show Example
+              </button>
+              <pre class="example-code">import java.util.Arrays;
+int[][] arr1 = {{1, 2}, {3, 4}};
+int[][] arr2 = {{1, 2}, {3, 4}};
+System.out.println(Arrays.deepEquals(arr1, arr2)); 
+// Output: true</pre>
+            </div>
+          </div>
+
+          <div class="method-card">
+            <div class="card-header">
+              <div class="method-name">deepHashCode(Object[] a)</div>
+              <div class="method-args">Arguments: 1</div>
+            </div>
+            <div class="card-body">
+              <p class="method-desc">Returns a deep hash code for the array (for multi-dimensional arrays).</p>
+            </div>
+            <div class="card-footer">
+              <button class="example-btn">
+                <i class="fas fa-code"></i> Show Example
+              </button>
+              <pre class="example-code">import java.util.Arrays;
+Object[][] arr = {{1, 2}, {"a", "b"}};
+System.out.println(Arrays.deepHashCode(arr)); 
+// Output: (an integer hash code)</pre>
+            </div>
+          </div>
+
+          <div class="method-card">
+            <div class="card-header">
+              <div class="method-name">deepToString(Object[] a)</div>
+              <div class="method-args">Arguments: 1</div>
+            </div>
+            <div class="card-body">
+              <p class="method-desc">Returns a deep string representation of the array (for multi-dimensional arrays).</p>
+            </div>
+            <div class="card-footer">
+              <button class="example-btn">
+                <i class="fas fa-code"></i> Show Example
+              </button>
+              <pre class="example-code">import java.util.Arrays;
+int[][] arr = {{1, 2}, {3, 4}};
+System.out.println(Arrays.deepToString(arr)); 
+// Output: [[1, 2], [3, 4]]</pre>
+            </div>
+          </div>
+
+          <div class="method-card">
+            <div class="card-header">
+              <div class="method-name">equals(array1, array2)</div>
+              <div class="method-args">Arguments: 2</div>
+            </div>
+            <div class="card-body">
+              <p class="method-desc">Checks if two arrays are equal (same elements in same order).</p>
+            </div>
+            <div class="card-footer">
+              <button class="example-btn">
+                <i class="fas fa-code"></i> Show Example
+              </button>
+              <pre class="example-code">import java.util.Arrays;
+int[] arr1 = {1, 2, 3};
+int[] arr2 = {1, 2, 3};
+System.out.println(Arrays.equals(arr1, arr2)); 
+// Output: true</pre>
+            </div>
+          </div>
+
+          <div class="method-card">
+            <div class="card-header">
+              <div class="method-name">fill(array, value)</div>
+              <div class="method-args">Arguments: 2</div>
+            </div>
+            <div class="card-body">
+              <p class="method-desc">Assigns the specified value to each element of the array.</p>
+            </div>
+            <div class="card-footer">
+              <button class="example-btn">
+                <i class="fas fa-code"></i> Show Example
+              </button>
+              <pre class="example-code">import java.util.Arrays;
+int[] arr = new int[5];
+Arrays.fill(arr, 7);
+System.out.println(Arrays.toString(arr)); 
+// Output: [7, 7, 7, 7, 7]</pre>
+            </div>
+          </div>
+
+          <div class="method-card">
+            <div class="card-header">
+              <div class="method-name">hashCode(array)</div>
+              <div class="method-args">Arguments: 1</div>
+            </div>
+            <div class="card-body">
+              <p class="method-desc">Returns a hash code based on the contents of the array.</p>
+            </div>
+            <div class="card-footer">
+              <button class="example-btn">
+                <i class="fas fa-code"></i> Show Example
+              </button>
+              <pre class="example-code">import java.util.Arrays;
+int[] arr = {1, 2, 3};
+System.out.println(Arrays.hashCode(arr)); 
+// Output: (an integer hash code)</pre>
+            </div>
+          </div>
+
+          <div class="method-card">
+            <div class="card-header">
+              <div class="method-name">mismatch(array1, array2)</div>
+              <div class="method-args">Arguments: 2</div>
+            </div>
+            <div class="card-body">
+              <p class="method-desc">Finds and returns the index of the first mismatch between two arrays.</p>
+            </div>
+            <div class="card-footer">
+              <button class="example-btn">
+                <i class="fas fa-code"></i> Show Example
+              </button>
+              <pre class="example-code">import java.util.Arrays;
+int[] arr1 = {1, 2, 3, 4};
+int[] arr2 = {1, 2, 5, 4};
+System.out.println(Arrays.mismatch(arr1, arr2)); 
+// Output: 2</pre>
+            </div>
+          </div>
+
+          <div class="method-card">
+            <div class="card-header">
+              <div class="method-name">parallelPrefix(array, operator)</div>
+              <div class="method-args">Arguments: 2</div>
+            </div>
+            <div class="card-body">
+              <p class="method-desc">Applies a binary operator to each element in the array in parallel (e.g., cumulative sum).</p>
+            </div>
+            <div class="card-footer">
+              <button class="example-btn">
+                <i class="fas fa-code"></i> Show Example
+              </button>
+              <pre class="example-code">import java.util.Arrays;
+int[] arr = {1, 2, 3, 4};
+Arrays.parallelPrefix(arr, (a, b) -> a + b);
+System.out.println(Arrays.toString(arr)); 
+// Output: [1, 3, 6, 10]</pre>
+            </div>
+          </div>
+
+          <div class="method-card">
+            <div class="card-header">
+              <div class="method-name">parallelSetAll(array, generator)</div>
+              <div class="method-args">Arguments: 2</div>
+            </div>
+            <div class="card-body">
+              <p class="method-desc">Sets all elements in parallel using a generated function.</p>
+            </div>
+            <div class="card-footer">
+              <button class="example-btn">
+                <i class="fas fa-code"></i> Show Example
+              </button>
+              <pre class="example-code">import java.util.Arrays;
+int[] arr = new int[5];
+Arrays.parallelSetAll(arr, i -> i * 2);
+System.out.println(Arrays.toString(arr)); 
+// Output: [0, 2, 4, 6, 8]</pre>
+            </div>
+          </div>
+
+          <div class="method-card">
+            <div class="card-header">
+              <div class="method-name">parallelSort(array)</div>
+              <div class="method-args">Arguments: 1</div>
+            </div>
+            <div class="card-body">
+              <p class="method-desc">Sorts the specified array in parallel (uses multiple threads for large arrays).</p>
+            </div>
+            <div class="card-footer">
+              <button class="example-btn">
+                <i class="fas fa-code"></i> Show Example
+              </button>
+              <pre class="example-code">import java.util.Arrays;
+int[] arr = {5, 1, 4, 2, 8};
+Arrays.parallelSort(arr);
+System.out.println(Arrays.toString(arr)); 
+// Output: [1, 2, 4, 5, 8]</pre>
+            </div>
+          </div>
+
+          <div class="method-card">
+            <div class="card-header">
+              <div class="method-name">setAll(array, generator)</div>
+              <div class="method-args">Arguments: 2</div>
+            </div>
+            <div class="card-body">
+              <p class="method-desc">Sets each element using a generated function.</p>
+            </div>
+            <div class="card-footer">
+              <button class="example-btn">
+                <i class="fas fa-code"></i> Show Example
+              </button>
+              <pre class="example-code">import java.util.Arrays;
+int[] arr = new int[3];
+Arrays.setAll(arr, i -> i + 10);
+System.out.println(Arrays.toString(arr)); 
+// Output: [10, 11, 12]</pre>
+            </div>
+          </div>
+
+          <div class="method-card">
+            <div class="card-header">
+              <div class="method-name">sort(array)</div>
+              <div class="method-args">Arguments: 1</div>
+            </div>
+            <div class="card-body">
+              <p class="method-desc">Sorts the specified array into ascending order.</p>
+            </div>
+            <div class="card-footer">
+              <button class="example-btn">
+                <i class="fas fa-code"></i> Show Example
+              </button>
+              <pre class="example-code">import java.util.Arrays;
+int[] arr = {3, 1, 2};
+Arrays.sort(arr);
+System.out.println(Arrays.toString(arr)); 
+// Output: [1, 2, 3]</pre>
+            </div>
+          </div>
+
+          <div class="method-card">
+            <div class="card-header">
+              <div class="method-name">spliterator(array)</div>
+              <div class="method-args">Arguments: 1</div>
+            </div>
+            <div class="card-body">
+              <p class="method-desc">Returns a spliterator over the elements in the array (Java 8+).</p>
+            </div>
+            <div class="card-footer">
+              <button class="example-btn">
+                <i class="fas fa-code"></i> Show Example
+              </button>
+              <pre class="example-code">import java.util.Arrays;
+import java.util.Spliterator;
+int[] arr = {1, 2, 3};
+Spliterator.OfInt sp = Arrays.spliterator(arr);
+sp.forEachRemaining(System.out::println);
+// Output:
+// 1
+// 2
+// 3</pre>
+            </div>
+          </div>
+
+          <div class="method-card">
+            <div class="card-header">
+              <div class="method-name">stream(array)</div>
+              <div class="method-args">Arguments: 1</div>
+            </div>
+            <div class="card-body">
+              <p class="method-desc">Returns a sequential Stream with the specified array as its source (Java 8+).</p>
+            </div>
+            <div class="card-footer">
+              <button class="example-btn">
+                <i class="fas fa-code"></i> Show Example
+              </button>
+              <pre class="example-code">import java.util.Arrays;
+int[] arr = {1, 2, 3};
+int sum = Arrays.stream(arr).sum();
+System.out.println(sum); 
+// Output: 6</pre>
+            </div>
+          </div>
+
+          <div class="method-card">
+            <div class="card-header">
+              <div class="method-name">toString(array)</div>
+              <div class="method-args">Arguments: 1</div>
+            </div>
+            <div class="card-body">
+              <p class="method-desc">Returns a string representation of the array.</p>
+            </div>
+            <div class="card-footer">
+              <button class="example-btn">
+                <i class="fas fa-code"></i> Show Example
+              </button>
+              <pre class="example-code">import java.util.Arrays;
+int[] arr = {1, 2, 3};
+System.out.println(Arrays.toString(arr)); 
+// Output: [1, 2, 3]</pre>
+            </div>
+          </div>
+        </div>
+        <p class="method-note"><strong>Note:</strong> The <code>length</code> property is used to get the size of an array in Java, but it is a field — not a method.</p>
+      </section>
+
+      <!-- Java StringBuilder Methods Section -->
+      <section class="category-section" id="stringbuilder-methods-section">
+        <div class="section-header">
+          <div class="section-icon">
+            <i class="fas fa-pencil-alt"></i>
+          </div>
+          <h2 class="section-title">Java <code>StringBuilder</code> Methods</h2>
+        </div>
+        
+        <div class="method-grid">
+          <div class="method-card">
+            <div class="card-header">
+              <div class="method-name">append(value)</div>
+              <div class="method-args">Arguments: Various</div>
+            </div>
+            <div class="card-body">
+              <p class="method-desc">Appends the specified value (string, char, int, etc.) to the builder.</p>
+            </div>
+            <div class="card-footer">
+              <button class="example-btn">
+                <i class="fas fa-code"></i> Show Example
+              </button>
+              <pre class="example-code">StringBuilder sb = new StringBuilder("Hello");
+sb.append(" World");
+System.out.println(sb); 
+// Output: Hello World</pre>
+            </div>
+          </div>
+
+          <div class="method-card">
+            <div class="card-header">
+              <div class="method-name">insert(int offset, value)</div>
+              <div class="method-args">Arguments: 2</div>
+            </div>
+            <div class="card-body">
+              <p class="method-desc">Inserts a value at the specified offset position.</p>
+            </div>
+            <div class="card-footer">
+              <button class="example-btn">
+                <i class="fas fa-code"></i> Show Example
+              </button>
+              <pre class="example-code">StringBuilder sb = new StringBuilder("Java");
+sb.insert(4, " is fun");
+System.out.println(sb); 
+// Output: Java is fun</pre>
+            </div>
+          </div>
+
+          <div class="method-card">
+            <div class="card-header">
+              <div class="method-name">replace(int start, int end, String str)</div>
+              <div class="method-args">Arguments: 3</div>
+            </div>
+            <div class="card-body">
+              <p class="method-desc">Replaces the characters between start (inclusive) and end (exclusive) positions with the provided string.</p>
+            </div>
+            <div class="card-footer">
+              <button class="example-btn">
+                <i class="fas fa-code"></i> Show Example
+              </button>
+              <pre class="example-code">StringBuilder sb = new StringBuilder("Hello World");
+sb.replace(6, 11, "Java");
+System.out.println(sb); 
+// Output: Hello Java</pre>
+            </div>
+          </div>
+
+          <div class="method-card">
+            <div class="card-header">
+              <div class="method-name">delete(int start, int end)</div>
+              <div class="method-args">Arguments: 2</div>
+            </div>
+            <div class="card-body">
+              <p class="method-desc">Removes characters between the given start (inclusive) and end (exclusive) indexes.</p>
+            </div>
+            <div class="card-footer">
+              <button class="example-btn">
+                <i class="fas fa-code"></i> Show Example
+              </button>
+              <pre class="example-code">StringBuilder sb = new StringBuilder("abcdef");
+sb.delete(1, 4); // deletes 'bcd'
+System.out.println(sb); 
+// Output: af</pre>
+            </div>
+          </div>
+
+          <div class="method-card">
+            <div class="card-header">
+              <div class="method-name">deleteCharAt(int index)</div>
+              <div class="method-args">Arguments: 1</div>
+            </div>
+            <div class="card-body">
+              <p class="method-desc">Removes the character at the specified index.</p>
+            </div>
+            <div class="card-footer">
+              <button class="example-btn">
+                <i class="fas fa-code"></i> Show Example
+              </button>
+              <pre class="example-code">StringBuilder sb = new StringBuilder("Java");
+sb.deleteCharAt(1); // deletes 'a'
+System.out.println(sb); 
+// Output: Jva</pre>
+            </div>
+          </div>
+
+          <div class="method-card">
+            <div class="card-header">
+              <div class="method-name">reverse()</div>
+              <div class="method-args">Arguments: 0</div>
+            </div>
+            <div class="card-body">
+              <p class="method-desc">Reverses the sequence of characters.</p>
+            </div>
+            <div class="card-footer">
+              <button class="example-btn">
+                <i class="fas fa-code"></i> Show Example
+              </button>
+              <pre class="example-code">StringBuilder sb = new StringBuilder("hello");
+sb.reverse();
+System.out.println(sb); 
+// Output: olleh</pre>
+            </div>
+          </div>
+
+          <div class="method-card">
+            <div class="card-header">
+              <div class="method-name">capacity()</div>
+              <div class="method-args">Arguments: 0</div>
+            </div>
+            <div class="card-body">
+              <p class="method-desc">Returns the current capacity of the StringBuilder.</p>
+            </div>
+            <div class="card-footer">
+              <button class="example-btn">
+                <i class="fas fa-code"></i> Show Example
+              </button>
+              <pre class="example-code">StringBuilder sb = new StringBuilder("abc");
+System.out.println(sb.capacity()); 
+// Output: 19 (initial capacity 16 + "abc".length())</pre>
+            </div>
+          </div>
+
+          <div class="method-card">
+            <div class="card-header">
+              <div class="method-name">ensureCapacity(int minimumCapacity)</div>
+              <div class="method-args">Arguments: 1</div>
+            </div>
+            <div class="card-body">
+              <p class="method-desc">Increases the capacity, if needed, to ensure it can hold a minimum number of characters.</p>
+            </div>
+            <div class="card-footer">
+              <button class="example-btn">
+                <i class="fas fa-code"></i> Show Example
+              </button>
+              <pre class="example-code">StringBuilder sb = new StringBuilder("short");
+System.out.println("Initial capacity: " + sb.capacity());
+sb.ensureCapacity(50);
+System.out.println("New capacity: " + sb.capacity()); 
+// Output:
+// Initial capacity: 21
+// New capacity: 50 (or more)</pre>
+            </div>
+          </div>
+
+          <div class="method-card">
+            <div class="card-header">
+              <div class="method-name">charAt(int index)</div>
+              <div class="method-args">Arguments: 1</div>
+            </div>
+            <div class="card-body">
+              <p class="method-desc">Returns the character at the specified index.</p>
+            </div>
+            <div class="card-footer">
+              <button class="example-btn">
+                <i class="fas fa-code"></i> Show Example
+              </button>
+              <pre class="example-code">StringBuilder sb = new StringBuilder("World");
+char c = sb.charAt(1);
+System.out.println(c); 
+// Output: o</pre>
+            </div>
+          </div>
+
+          <div class="method-card">
+            <div class="card-header">
+              <div class="method-name">setCharAt(int index, char ch)</div>
+              <div class="method-args">Arguments: 2</div>
+            </div>
+            <div class="card-body">
+              <p class="method-desc">Sets the character at the specified index.</p>
+            </div>
+            <div class="card-footer">
+              <button class="example-btn">
+                <i class="fas fa-code"></i> Show Example
+              </button>
+              <pre class="example-code">StringBuilder sb = new StringBuilder("apple");
+sb.setCharAt(0, 'A');
+System.out.println(sb); 
+// Output: Apple</pre>
+            </div>
+          </div>
+
+          <div class="method-card">
+            <div class="card-header">
+              <div class="method-name">length()</div>
+              <div class="method-args">Arguments: 0</div>
+            </div>
+            <div class="card-body">
+              <p class="method-desc">Returns the length of the character sequence.</p>
+            </div>
+            <div class="card-footer">
+              <button class="example-btn">
+                <i class="fas fa-code"></i> Show Example
+              </button>
+              <pre class="example-code">StringBuilder sb = new StringBuilder("test");
+System.out.println(sb.length()); 
+// Output: 4</pre>
+            </div>
+          </div>
+
+          <div class="method-card">
+            <div class="card-header">
+              <div class="method-name">setLength(int newLength)</div>
+              <div class="method-args">Arguments: 1</div>
+            </div>
+            <div class="card-body">
+              <p class="method-desc">Sets the new length of the builder. If newLength is less than current length, characters are truncated. If greater, null characters are appended.</p>
+            </div>
+            <div class="card-footer">
+              <button class="example-btn">
+                <i class="fas fa-code"></i> Show Example
+              </button>
+              <pre class="example-code">StringBuilder sb = new StringBuilder("abcdef");
+sb.setLength(3);
+System.out.println(sb); 
+// Output: abc</pre>
+            </div>
+          </div>
+
+          <div class="method-card">
+            <div class="card-header">
+              <div class="method-name">substring(int start)</div>
+              <div class="method-args">Arguments: 1</div>
+            </div>
+            <div class="card-body">
+              <p class="method-desc">Returns a new String that is a substring starting from the specified index to the end.</p>
+            </div>
+            <div class="card-footer">
+              <button class="example-btn">
+                <i class="fas fa-code"></i> Show Example
+              </button>
+              <pre class="example-code">StringBuilder sb = new StringBuilder("Programming");
+String sub = sb.substring(4);
+System.out.println(sub); 
+// Output: ramming</pre>
+            </div>
+          </div>
+
+          <div class="method-card">
+            <div class="card-header">
+              <div class="method-name">substring(int start, int end)</div>
+              <div class="method-args">Arguments: 2</div>
+            </div>
+            <div class="card-body">
+              <p class="method-desc">Returns a new String that is a substring from start (inclusive) to end (exclusive).</p>
+            </div>
+            <div class="card-footer">
+              <button class="example-btn">
+                <i class="fas fa-code"></i> Show Example
+              </button>
+              <pre class="example-code">StringBuilder sb = new StringBuilder("Hello Java");
+String sub = sb.substring(0, 5);
+System.out.println(sub); 
+// Output: Hello</pre>
+            </div>
+          </div>
+
+          <div class="method-card">
+            <div class="card-header">
+              <div class="method-name">toString()</div>
+              <div class="method-args">Arguments: 0</div>
+            </div>
+            <div class="card-body">
+              <p class="method-desc">Converts the builder object to an immutable String.</p>
+            </div>
+            <div class="card-footer">
+              <button class="example-btn">
+                <i class="fas fa-code"></i> Show Example
+              </button>
+              <pre class="example-code">StringBuilder sb = new StringBuilder("Final String");
+String s = sb.toString();
+System.out.println(s); 
+// Output: Final String</pre>
+            </div>
+          </div>
+
+          <div class="method-card">
+            <div class="card-header">
+              <div class="method-name">trimToSize()</div>
+              <div class="method-args">Arguments: 0</div>
+            </div>
+            <div class="card-body">
+              <p class="method-desc">Trims the capacity to the current length. Reduces memory usage if capacity is much larger than actual content.</p>
+            </div>
+            <div class="card-footer">
+              <button class="example-btn">
+                <i class="fas fa-code"></i> Show Example
+              </button>
+              <pre class="example-code">StringBuilder sb = new StringBuilder(100); // Initial capacity 100
+sb.append("small");
+System.out.println("Before trim: " + sb.capacity());
+sb.trimToSize();
+System.out.println("After trim: " + sb.capacity()); 
+// Output:
+// Before trim: 100
+// After trim: 5</pre>
+            </div>
+          </div>
+
+          <div class="method-card">
+            <div class="card-header">
+              <div class="method-name">getChars(int srcBegin, int srcEnd, char[] dst, int dstBegin)</div>
+              <div class="method-args">Arguments: 4</div>
+            </div>
+            <div class="card-body">
+              <p class="method-desc">Copies characters from this sequence into the destination character array.</p>
+            </div>
+            <div class="card-footer">
+              <button class="example-btn">
+                <i class="fas fa-code"></i> Show Example
+              </button>
+              <pre class="example-code">import java.util.Arrays;
+StringBuilder sb = new StringBuilder("example");
+char[] dest = new char[10];
+sb.getChars(0, 3, dest, 0); // Copies 'exa'
+System.out.println(Arrays.toString(dest)); 
+// Output: [e, x, a, , , , , , , ]</pre>
+            </div>
+          </div>
+
+          <div class="method-card">
+            <div class="card-header">
+              <div class="method-name">indexOf(String str)</div>
+              <div class="method-args">Arguments: 1</div>
+            </div>
+            <div class="card-body">
+              <p class="method-desc">Returns the index of the first occurrence of the specified substring.</p>
+            </div>
+            <div class="card-footer">
+              <button class="example-btn">
+                <i class="fas fa-code"></i> Show Example
+              </button>
+              <pre class="example-code">StringBuilder sb = new StringBuilder("test string");
+System.out.println(sb.indexOf("str")); 
+// Output: 5</pre>
+            </div>
+          </div>
+
+          <div class="method-card">
+            <div class="card-header">
+              <div class="method-name">lastIndexOf(String str)</div>
+              <div class="method-args">Arguments: 1</div>
+            </div>
+            <div class="card-body">
+              <p class="method-desc">Returns the last occurrence of the specified substring.</p>
+            </div>
+            <div class="card-footer">
+              <button class="example-btn">
+                <i class="fas fa-code"></i> Show Example
+              </button>
+              <pre class="example-code">StringBuilder sb = new StringBuilder("abcabc");
+System.out.println(sb.lastIndexOf("abc")); 
+// Output: 3</pre>
+            </div>
+          </div>
+
+          <div class="method-card">
+            <div class="card-header">
+              <div class="method-name">offsetByCodePoints(int index, int codePointOffset)</div>
+              <div class="method-args">Arguments: 2</div>
+            </div>
+            <div class="card-body">
+              <p class="method-desc">Returns the index within this sequence that is offset by `codePointOffset` code points starting from `index`.</p>
+            </div>
+            <div class="card-footer">
+              <button class="example-btn">
+                <i class="fas fa-code"></i> Show Example
+              </button>
+              <pre class="example-code">StringBuilder sb = new StringBuilder("Hello\uD83D\uDE00World");
+int newIndex = sb.offsetByCodePoints(0, 6);
+System.out.println(newIndex); 
+// Output: 7</pre>
+            </div>
+          </div>
+
+          <div class="method-card">
+            <div class="card-header">
+              <div class="method-name">codePointAt(int index)</div>
+              <div class="method-args">Arguments: 1</div>
+            </div>
+            <div class="card-body">
+              <p class="method-desc">Returns the Unicode code point at the specified index.</p>
+            </div>
+            <div class="card-footer">
+              <button class="example-btn">
+                <i class="fas fa-code"></i> Show Example
+              </button>
+              <pre class="example-code">StringBuilder sb = new StringBuilder("Test\uD83D\uDC4D"); // Thumbs up emoji
+System.out.println(sb.codePointAt(4)); 
+// Output: 128077</pre>
+            </div>
+          </div>
+
+          <div class="method-card">
+            <div class="card-header">
+              <div class="method-name">codePointBefore(int index)</div>
+              <div class="method-args">Arguments: 1</div>
+            </div>
+            <div class="card-body">
+              <p class="method-desc">Returns the Unicode code point before the specified index.</p>
+            </div>
+            <div class="card-footer">
+              <button class="example-btn">
+                <i class="fas fa-code"></i> Show Example
+              </button>
+              <pre class="example-code">StringBuilder sb = new StringBuilder("Test\uD83D\uDC4D");
+System.out.println(sb.codePointBefore(6)); 
+// Output: 128077</pre>
+            </div>
+          </div>
+
+          <div class="method-card">
+            <div class="card-header">
+              <div class="method-name">codePointCount(int beginIndex, int endIndex)</div>
+              <div class="method-args">Arguments: 2</div>
+            </div>
+            <div class="card-body">
+              <p class="method-desc">Returns the number of Unicode code points between two indices.</p>
+            </div>
+            <div class="card-footer">
+              <button class="example-btn">
+                <i class="fas fa-code"></i> Show Example
+              </button>
+              <pre class="example-code">StringBuilder sb = new StringBuilder("A\uD83D\uDE00B");
+System.out.println(sb.codePointCount(0, sb.length())); 
+// Output: 3 (A, emoji, B)</pre>
+            </div>
+          </div>
+
+          <div class="method-card">
+            <div class="card-header">
+              <div class="method-name">subSequence(int start, int end)</div>
+              <div class="method-args">Arguments: 2</div>
+            </div>
+            <div class="card-body">
+              <p class="method-desc">Returns a new character sequence from start (inclusive) to end (exclusive).</p>
+            </div>
+            <div class="card-footer">
+              <button class="example-btn">
+                <i class="fas fa-code"></i> Show Example
+              </button>
+              <pre class="example-code">StringBuilder sb = new StringBuilder("abcdef");
+CharSequence cs = sb.subSequence(1, 4);
+System.out.println(cs); 
+// Output: bcd</pre>
+            </div>
+          </div>
+        </div>
+        <p class="method-note"><strong>Note:</strong> <code>StringBuilder</code> performs better than <code>String</code> for many string modifications due to its mutability.</p>
+      </section>
+
+      <!-- Java Character Array Methods Section -->
+      <section class="category-section" id="char-array-methods-section">
+        <div class="section-header">
+          <div class="section-icon">
+            <i class="fas fa-grip-lines"></i>
+          </div>
+          <h2 class="section-title">Java Character Array Methods (<code>char[]</code>)</h2>
+        </div>
+        
+        <h3>Common Operations:</h3>
+        <ul class="common-operations-list">
+          <li><strong>Declaration:</strong> <code>char[] letters;</code></li>
+          <li><strong>Initialization:</strong> <code>char[] vowels = {'a', 'e', 'i', 'o', 'u'};</code></li>
+          <li><strong>Access:</strong> <code>letters[i]</code></li>
+          <li><strong>Iteration (for loop):</strong> <code>for (int i = 0; i &lt; arr.length; i++) { ... }</code></li>
+          <li><strong>Iteration (enhanced for loop):</strong> <code>for (char c : arr) { ... }</code></li>
+          <li><strong>Modification:</strong> <code>arr[2] = 'z';</code></li>
+          <li><strong>Comparison:</strong> <code>Arrays.equals(arr1, arr2);</code></li>
+          <li><strong>Sorting:</strong> <code>Arrays.sort(arr);</code></li>
+          <li><strong>Printing (as String):</strong> <code>System.out.println(Arrays.toString(arr));</code></li>
+          <li><strong>Conversion from String:</strong> <code>char[] array = str.toCharArray();</code></li>
+          <li><strong>Conversion to String:</strong> <code>String s = new String(arr);</code></li>
+        </ul>
+
+        <h3>Utility Methods from <code>java.util.Arrays</code>:</h3>
+        <div class="method-grid">
+          <div class="method-card">
+            <div class="card-header">
+              <div class="method-name">equals(char[] a, char[] a2)</div>
+              <div class="method-args">Arguments: 2</div>
+            </div>
+            <div class="card-body">
+              <p class="method-desc">Checks if two character arrays are equal.</p>
+            </div>
+            <div class="card-footer">
+              <button class="example-btn">
+                <i class="fas fa-code"></i> Show Example
+              </button>
+              <pre class="example-code">import java.util.Arrays;
+char[] arr1 = {'a', 'b'};
+char[] arr2 = {'a', 'b'};
+System.out.println(Arrays.equals(arr1, arr2)); 
+// Output: true</pre>
+            </div>
+          </div>
+
+          <div class="method-card">
+            <div class="card-header">
+              <div class="method-name">copyOf(char[] original, int newLength)</div>
+              <div class="method-args">Arguments: 2</div>
+            </div>
+            <div class="card-body">
+              <p class="method-desc">Copies the specified character array, truncating or padding as necessary.</p>
+            </div>
+            <div class="card-footer">
+              <button class="example-btn">
+                <i class="fas fa-code"></i> Show Example
+              </button>
+              <pre class="example-code">import java.util.Arrays;
+char[] original = {'x', 'y'};
+char[] copy = Arrays.copyOf(original, 4);
+System.out.println(Arrays.toString(copy)); 
+// Output: [x, y, , ] (empty chars)</pre>
+            </div>
+          </div>
+
+          <div class="method-card">
+            <div class="card-header">
+              <div class="method-name">copyOfRange(char[] original, int from, int to)</div>
+              <div class="method-args">Arguments: 3</div>
+            </div>
+            <div class="card-body">
+              <p class="method-desc">Copies a range of the specified character array into a new array.</p>
+            </div>
+            <div class="card-footer">
+              <button class="example-btn">
+                <i class="fas fa-code"></i> Show Example
+              </button>
+              <pre class="example-code">import java.util.Arrays;
+char[] original = {'a', 'b', 'c', 'd'};
+char[] rangeCopy = Arrays.copyOfRange(original, 1, 3);
+System.out.println(Arrays.toString(rangeCopy)); 
+// Output: [b, c]</pre>
+            </div>
+          </div>
+
+          <div class="method-card">
+            <div class="card-header">
+              <div class="method-name">fill(char[] a, char val)</div>
+              <div class="method-args">Arguments: 2</div>
+            </div>
+            <div class="card-body">
+              <p class="method-desc">Fills the character array with the specified value.</p>
+            </div>
+            <div class="card-footer">
+              <button class="example-btn">
+                <i class="fas fa-code"></i> Show Example
+              </button>
+              <pre class="example-code">import java.util.Arrays;
+char[] arr = new char[3];
+Arrays.fill(arr, 'Z');
+System.out.println(Arrays.toString(arr)); 
+// Output: [Z, Z, Z]</pre>
+            </div>
+          </div>
+
+          <div class="method-card">
+            <div class="card-header">
+              <div class="method-name">sort(char[] a)</div>
+              <div class="method-args">Arguments: 1</div>
+            </div>
+            <div class="card-body">
+              <p class="method-desc">Sorts the character array in ascending order.</p>
+            </div>
+            <div class="card-footer">
+              <button class="example-btn">
+                <i class="fas fa-code"></i> Show Example
+              </button>
+              <pre class="example-code">import java.util.Arrays;
+char[] arr = {'c', 'a', 'b'};
+Arrays.sort(arr);
+System.out.println(Arrays.toString(arr)); 
+// Output: [a, b, c]</pre>
+            </div>
+          </div>
+
+          <div class="method-card">
+            <div class="card-header">
+              <div class="method-name">toString(char[] a)</div>
+              <div class="method-args">Arguments: 1</div>
+            </div>
+            <div class="card-body">
+              <p class="method-desc">Returns a string representation of the character array.</p>
+            </div>
+            <div class="card-footer">
+              <button class="example-btn">
+                <i class="fas fa-code"></i> Show Example
+              </button>
+              <pre class="example-code">import java.util.Arrays;
+char[] arr = {'J', 'A', 'V', 'A'};
+System.out.println(Arrays.toString(arr)); 
+// Output: [J, A, V, A]</pre>
+            </div>
+          </div>
+
+          <div class="method-card">
+            <div class="card-header">
+              <div class="method-name">binarySearch(char[] a, char key)</div>
+              <div class="method-args">Arguments: 2</div>
+            </div>
+            <div class="card-body">
+              <p class="method-desc">Searches the array for a key, returns the index or negative insertion point (requires sorted array).</p>
+            </div>
+            <div class="card-footer">
+              <button class="example-btn">
+                <i class="fas fa-code"></i> Show Example
+              </button>
+              <pre class="example-code">import java.util.Arrays;
+char[] arr = {'a', 'b', 'c', 'd'};
+int index = Arrays.binarySearch(arr, 'c');
+System.out.println(index); 
+// Output: 2</pre>
+            </div>
+          </div>
+        </div>
+        <p class="method-note"><strong>Tip:</strong> Character arrays are often used for manual string manipulation, conversion, or when working with sensitive data (since char arrays can be cleared from memory).</p>
+      </section>
+    </main>
+  </div>
+
+  <footer class="footer">
+    <p>Java Arrays, StringBuilder, Character Array Cheat Sheet | Covering essential methods</p>
+    <p>Tip: Click on any example button to see the code implementation</p>
+    <p class="highlight">Designed with modern UI principles for better developer experience</p>
+  </footer>
+
+  <script>
+    // Theme toggle functionality
+    const themeBtn = document.getElementById('themeBtn');
+    themeBtn.addEventListener('click', toggleTheme);
+    
+    function toggleTheme() {
+      document.body.classList.toggle('dark-mode');
+      if (document.body.classList.contains('dark-mode')) {
+        themeBtn.innerHTML = '<i class="fas fa-sun"></i>'; // Changed to icon only
+        themeBtn.setAttribute('aria-label', 'Toggle light mode');
+      } else {
+        themeBtn.innerHTML = '<i class="fas fa-moon"></i>'; // Changed to icon only
+        themeBtn.setAttribute('aria-label', 'Toggle dark mode');
+      }
+    }
+    
+    // Example toggle functionality (no category navigation needed anymore)
+    const exampleBtns = document.querySelectorAll('.example-btn');
+    exampleBtns.forEach(btn => {
+      btn.addEventListener('click', () => {
+        const exampleCode = btn.nextElementSibling;
+        const isActive = exampleCode.classList.contains('active');
+        
+        // Close all other examples
+        document.querySelectorAll('.example-code').forEach(code => {
+          code.classList.remove('active');
+        });
+        
+        // Toggle current example
+        exampleCode.classList.toggle('active', !isActive);
+        
+        // Scroll to the example if opening
+        if (!isActive) {
+          exampleCode.scrollIntoView({ behavior: 'smooth', block: 'nearest' });
+        }
+      });
+    });
+
+    // Initialize theme button icon based on current theme
+    if (document.body.classList.contains('dark-mode')) {
+      themeBtn.innerHTML = '<i class="fas fa-sun"></i>';
+      themeBtn.setAttribute('aria-label', 'Toggle light mode');
+    } else {
+      themeBtn.innerHTML = '<i class="fas fa-moon"></i>';
+      themeBtn.setAttribute('aria-label', 'Toggle dark mode');
+    }
+  </script>
+</body>
+</html>
+

@@ -1,0 +1,853 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Java String Methods Cheat Sheet</title>
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+  <style>
+    :root {
+      --primary: #4361ee;
+      --secondary: #3f37c9;
+      --accent: #4895ef;
+      --light: #f8f9fa;
+      --dark: #212529;
+      --success: #4cc9f0;
+      --card-bg: #ffffff;
+      --text: #333333;
+      --border: #e0e0e0;
+      --code-bg: #f5f7ff;
+      --shadow: 0 4px 20px rgba(0, 0, 0, 0.08);
+      --radius: 12px;
+      --transition: all 0.3s ease;
+    }
+
+    .dark-mode {
+      --primary: #4895ef;
+      --secondary: #4361ee;
+      --accent: #3f37c9;
+      --light: #121212;
+      --dark: #f8f9fa;
+      --card-bg: #1e1e1e;
+      --text: #e0e0e0;
+      --border: #333333;
+      --code-bg: #2a2a2a;
+      --shadow: 0 4px 20px rgba(0, 0, 0, 0.3);
+    }
+
+    * {
+      margin: 0;
+      padding: 0;
+      box-sizing: border-box;
+    }
+
+    body {
+      font-family: 'Segoe UI', system-ui, -apple-system, sans-serif;
+      background: linear-gradient(135deg, var(--light) 0%, #e6e9ff 100%);
+      color: var(--text);
+      line-height: 1.6;
+      padding: 20px;
+      min-height: 100vh;
+      transition: var(--transition);
+    }
+
+    .dark-mode body {
+      background: linear-gradient(135deg, #0f0c29 0%, #302b63 100%);
+    }
+
+    .container {
+      max-width: 1200px;
+      margin: 0 auto;
+    }
+
+    header {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      margin-bottom: 40px;
+      padding: 20px 0;
+      border-bottom: 1px solid var(--border);
+    }
+
+    .logo {
+      display: flex;
+      align-items: center;
+      gap: 15px;
+    }
+
+    .logo i {
+      font-size: 2.5rem;
+      color: var(--primary);
+      background: linear-gradient(135deg, var(--primary), var(--accent));
+      -webkit-background-clip: text;
+      -webkit-text-fill-color: transparent;
+    }
+
+    .logo h1 {
+      font-size: 2.2rem;
+      font-weight: 800;
+      background: linear-gradient(135deg, var(--primary), var(--accent));
+      -webkit-background-clip: text;
+      -webkit-text-fill-color: transparent;
+    }
+
+    .controls {
+      display: flex;
+      gap: 15px;
+    }
+
+    .theme-toggle {
+      background: var(--card-bg);
+      border: 1px solid var(--border);
+      border-radius: 50px;
+      padding: 12px 20px;
+      display: flex;
+      align-items: center;
+      gap: 10px;
+      cursor: pointer;
+      font-weight: 600;
+      transition: var(--transition);
+      box-shadow: var(--shadow);
+    }
+
+    .theme-toggle:hover {
+      transform: translateY(-2px);
+      box-shadow: 0 6px 15px rgba(0, 0, 0, 0.1);
+    }
+
+    .dark-mode .theme-toggle:hover {
+      box-shadow: 0 6px 15px rgba(0, 0, 0, 0.3);
+    }
+
+    .intro {
+      text-align: center;
+      max-width: 700px;
+      margin: 0 auto 40px;
+    }
+
+    .intro h2 {
+      font-size: 2rem;
+      margin-bottom: 15px;
+      color: var(--primary);
+    }
+
+    .intro p {
+      font-size: 1.1rem;
+      color: var(--text);
+      opacity: 0.9;
+    }
+
+    .categories {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 15px;
+      margin-bottom: 30px;
+      justify-content: center;
+    }
+
+    .category-btn {
+      background: var(--card-bg);
+      border: 2px solid var(--border);
+      border-radius: 50px;
+      padding: 10px 20px;
+      font-weight: 600;
+      cursor: pointer;
+      transition: var(--transition);
+      display: flex;
+      align-items: center;
+      gap: 10px;
+      box-shadow: var(--shadow);
+      font-size: 0.95rem;
+    }
+
+    .category-btn.active, .category-btn:hover {
+      background: var(--primary);
+      color: white;
+      border-color: var(--primary);
+    }
+
+    .methods-container {
+      display: grid;
+      grid-template-columns: repeat(auto-fill, minmax(350px, 1fr));
+      gap: 25px;
+      margin-bottom: 40px;
+    }
+
+    .method-card {
+      background: var(--card-bg);
+      border-radius: var(--radius);
+      overflow: hidden;
+      box-shadow: var(--shadow);
+      transition: var(--transition);
+      border: 1px solid var(--border);
+    }
+
+    .method-card:hover {
+      transform: translateY(-5px);
+      box-shadow: 0 12px 25px rgba(0, 0, 0, 0.15);
+    }
+
+    .dark-mode .method-card:hover {
+      box-shadow: 0 12px 25px rgba(0, 0, 0, 0.4);
+    }
+
+    .card-header {
+      background: linear-gradient(135deg, var(--primary), var(--secondary));
+      color: white;
+      padding: 20px;
+    }
+
+    .card-header h3 {
+      font-size: 1.3rem;
+      margin-bottom: 8px;
+      font-weight: 700;
+    }
+
+    .method-signature {
+      font-family: 'Courier New', monospace;
+      background: rgba(0, 0, 0, 0.2);
+      padding: 8px 12px;
+      border-radius: 6px;
+      font-size: 1rem;
+      display: inline-block;
+    }
+
+    .card-body {
+      padding: 20px;
+    }
+
+    .method-meta {
+      display: flex;
+      gap: 15px;
+      margin-bottom: 15px;
+      padding-bottom: 15px;
+      border-bottom: 1px solid var(--border);
+    }
+
+    .meta-item {
+      display: flex;
+      align-items: center;
+      gap: 6px;
+      font-size: 0.9rem;
+    }
+
+    .meta-item i {
+      color: var(--primary);
+    }
+
+    .method-desc {
+      margin-bottom: 20px;
+      line-height: 1.7;
+    }
+
+    .example-toggle {
+      display: flex;
+      align-items: center;
+      gap: 10px;
+      color: var(--primary);
+      font-weight: 600;
+      cursor: pointer;
+      transition: var(--transition);
+      padding: 10px 0;
+    }
+
+    .example-toggle:hover {
+      color: var(--secondary);
+    }
+
+    .example-toggle i {
+      transition: transform 0.3s ease;
+    }
+
+    .example-toggle.active i {
+      transform: rotate(180deg);
+    }
+
+    .code-example {
+      background: var(--code-bg);
+      border-radius: 8px;
+      padding: 18px;
+      font-family: 'Courier New', monospace;
+      white-space: pre-wrap;
+      margin-top: 15px;
+      display: none;
+      border-left: 4px solid var(--primary);
+      font-size: 0.95rem;
+    }
+
+    .code-example.show {
+      display: block;
+      animation: fadeIn 0.4s ease;
+    }
+
+    @keyframes fadeIn {
+      from { opacity: 0; transform: translateY(10px); }
+      to { opacity: 1; transform: translateY(0); }
+    }
+
+    footer {
+      text-align: center;
+      padding: 30px 0;
+      color: var(--text);
+      opacity: 0.8;
+      font-size: 0.9rem;
+      border-top: 1px solid var(--border);
+    }
+
+    .highlight {
+      color: var(--primary);
+      font-weight: 600;
+    }
+
+    /* Responsive Design */
+    @media (max-width: 768px) {
+      .methods-container {
+        grid-template-columns: 1fr;
+      }
+      
+      header {
+        flex-direction: column;
+        gap: 20px;
+      }
+      
+      .logo h1 {
+        font-size: 1.8rem;
+      }
+      
+      .categories {
+        gap: 10px;
+      }
+      
+      .category-btn {
+        padding: 8px 15px;
+        font-size: 0.85rem;
+      }
+    }
+  </style>
+</head>
+<body>
+  <div class="container">
+    <header>
+      <div class="logo">
+        <i class="fas fa-code"></i>
+        <h1>Java String Methods Cheat Sheet</h1>
+      </div>
+      <div class="controls">
+        <div class="theme-toggle" id="themeToggle">
+          <i class="fas fa-moon"></i>
+          <span>Dark Mode</span>
+        </div>
+      </div>
+    </header>
+
+    <section class="intro">
+      <h2>Master Java String Manipulation</h2>
+      <p>A comprehensive reference guide to the most commonly used methods in Java's <span class="highlight">String</span> class with practical examples and usage tips.</p>
+    </section>
+
+    <div class="categories">
+      <div class="category-btn active" data-category="all">
+        <i class="fas fa-star"></i>
+        <span>All Methods</span>
+      </div>
+      <div class="category-btn" data-category="searching">
+        <i class="fas fa-search"></i>
+        <span>Searching</span>
+      </div>
+      <div class="category-btn" data-category="manipulation">
+        <i class="fas fa-cut"></i>
+        <span>Manipulation</span>
+      </div>
+      <div class="category-btn" data-category="comparison">
+        <i class="fas fa-balance-scale"></i>
+        <span>Comparison</span>
+      </div>
+      <div class="category-btn" data-category="conversion">
+        <i class="fas fa-exchange-alt"></i>
+        <span>Conversion</span>
+      </div>
+      <div class="category-btn" data-category="utility">
+        <i class="fas fa-tools"></i>
+        <span>Utility</span>
+      </div>
+    </div>
+
+    <div class="methods-container">
+      <!-- Searching Methods -->
+      <div class="method-card" data-category="searching">
+        <div class="card-header">
+          <h3>indexOf()</h3>
+          <div class="method-signature">str.indexOf(substring)</div>
+        </div>
+        <div class="card-body">
+          <div class="method-meta">
+            <div class="meta-item">
+              <i class="fas fa-cog"></i>
+              <span>Returns: int</span>
+            </div>
+            <div class="meta-item">
+              <i class="fas fa-tag"></i>
+              <span>Searching</span>
+            </div>
+          </div>
+          <p class="method-desc">Returns the index within this string of the first occurrence of the specified substring.</p>
+          <div class="example-toggle" onclick="toggleExample(this)">
+            <i class="fas fa-chevron-down"></i>
+            <span>View Example</span>
+          </div>
+          <div class="code-example">
+String str = "Hello World";
+int index = str.indexOf("World");
+System.out.println(index); 
+// Output: 6</div>
+        </div>
+      </div>
+
+      <div class="method-card" data-category="searching">
+        <div class="card-header">
+          <h3>lastIndexOf()</h3>
+          <div class="method-signature">str.lastIndexOf(substring)</div>
+        </div>
+        <div class="card-body">
+          <div class="method-meta">
+            <div class="meta-item">
+              <i class="fas fa-cog"></i>
+              <span>Returns: int</span>
+            </div>
+            <div class="meta-item">
+              <i class="fas fa-tag"></i>
+              <span>Searching</span>
+            </div>
+          </div>
+          <p class="method-desc">Returns the index within this string of the last occurrence of the specified substring.</p>
+          <div class="example-toggle" onclick="toggleExample(this)">
+            <i class="fas fa-chevron-down"></i>
+            <span>View Example</span>
+          </div>
+          <div class="code-example">
+String str = "apple, orange, apple";
+int index = str.lastIndexOf("apple");
+System.out.println(index); 
+// Output: 14</div>
+        </div>
+      </div>
+
+      <!-- Manipulation Methods -->
+      <div class="method-card" data-category="manipulation">
+        <div class="card-header">
+          <h3>substring()</h3>
+          <div class="method-signature">str.substring(startIndex, endIndex)</div>
+        </div>
+        <div class="card-body">
+          <div class="method-meta">
+            <div class="meta-item">
+              <i class="fas fa-cog"></i>
+              <span>Returns: String</span>
+            </div>
+            <div class="meta-item">
+              <i class="fas fa-tag"></i>
+              <span>Manipulation</span>
+            </div>
+          </div>
+          <p class="method-desc">Returns a new string that is a substring of this string. The substring begins at the specified beginIndex and extends to endIndex - 1.</p>
+          <div class="example-toggle" onclick="toggleExample(this)">
+            <i class="fas fa-chevron-down"></i>
+            <span>View Example</span>
+          </div>
+          <div class="code-example">
+String str = "Hello World";
+String sub = str.substring(6, 11);
+System.out.println(sub); 
+// Output: World</div>
+        </div>
+      </div>
+
+      <div class="method-card" data-category="manipulation">
+        <div class="card-header">
+          <h3>replace()</h3>
+          <div class="method-signature">str.replace(oldChar, newChar)</div>
+        </div>
+        <div class="card-body">
+          <div class="method-meta">
+            <div class="meta-item">
+              <i class="fas fa-cog"></i>
+              <span>Returns: String</span>
+            </div>
+            <div class="meta-item">
+              <i class="fas fa-tag"></i>
+              <span>Manipulation</span>
+            </div>
+          </div>
+          <p class="method-desc">Returns a new string resulting from replacing all occurrences of oldChar in this string with newChar.</p>
+          <div class="example-toggle" onclick="toggleExample(this)">
+            <i class="fas fa-chevron-down"></i>
+            <span>View Example</span>
+          </div>
+          <div class="code-example">
+String str = "Hello World";
+String replaced = str.replace('o', 'x');
+System.out.println(replaced); 
+// Output: Hellx Wxrld</div>
+        </div>
+      </div>
+
+      <!-- Comparison Methods -->
+      <div class="method-card" data-category="comparison">
+        <div class="card-header">
+          <h3>equals()</h3>
+          <div class="method-signature">str.equals(anotherString)</div>
+        </div>
+        <div class="card-body">
+          <div class="method-meta">
+            <div class="meta-item">
+              <i class="fas fa-cog"></i>
+              <span>Returns: boolean</span>
+            </div>
+            <div class="meta-item">
+              <i class="fas fa-tag"></i>
+              <span>Comparison</span>
+            </div>
+          </div>
+          <p class="method-desc">Compares this string to the specified object. The result is true if the argument is not null and is a String object that represents the same sequence of characters.</p>
+          <div class="example-toggle" onclick="toggleExample(this)">
+            <i class="fas fa-chevron-down"></i>
+            <span>View Example</span>
+          </div>
+          <div class="code-example">
+String str1 = "Hello";
+String str2 = "hello";
+boolean result1 = str1.equals(str2);
+boolean result2 = str1.equalsIgnoreCase(str2);
+System.out.println(result1); // false
+System.out.println(result2); // true</div>
+        </div>
+      </div>
+
+      <div class="method-card" data-category="comparison">
+        <div class="card-header">
+          <h3>compareTo()</h3>
+          <div class="method-signature">str.compareTo(anotherString)</div>
+        </div>
+        <div class="card-body">
+          <div class="method-meta">
+            <div class="meta-item">
+              <i class="fas fa-cog"></i>
+              <span>Returns: int</span>
+            </div>
+            <div class="meta-item">
+              <i class="fas fa-tag"></i>
+              <span>Comparison</span>
+            </div>
+          </div>
+          <p class="method-desc">Compares two strings lexicographically. Returns a negative integer, zero, or a positive integer as this string is less than, equal to, or greater than the specified string.</p>
+          <div class="example-toggle" onclick="toggleExample(this)">
+            <i class="fas fa-chevron-down"></i>
+            <span>View Example</span>
+          </div>
+          <div class="code-example">
+String str1 = "apple";
+String str2 = "banana";
+int result = str1.compareTo(str2);
+System.out.println(result); 
+// Output: -1 (since 'a' comes before 'b')</div>
+        </div>
+      </div>
+
+      <!-- Conversion Methods -->
+      <div class="method-card" data-category="conversion">
+        <div class="card-header">
+          <h3>toLowerCase()</h3>
+          <div class="method-signature">str.toLowerCase()</div>
+        </div>
+        <div class="card-body">
+          <div class="method-meta">
+            <div class="meta-item">
+              <i class="fas fa-cog"></i>
+              <span>Returns: String</span>
+            </div>
+            <div class="meta-item">
+              <i class="fas fa-tag"></i>
+              <span>Conversion</span>
+            </div>
+          </div>
+          <p class="method-desc">Converts all of the characters in this String to lower case using the rules of the default locale.</p>
+          <div class="example-toggle" onclick="toggleExample(this)">
+            <i class="fas fa-chevron-down"></i>
+            <span>View Example</span>
+          </div>
+          <div class="code-example">
+String str = "Hello WORLD";
+String lower = str.toLowerCase();
+System.out.println(lower); 
+// Output: hello world</div>
+        </div>
+      </div>
+
+      <div class="method-card" data-category="conversion">
+        <div class="card-header">
+          <h3>toUpperCase()</h3>
+          <div class="method-signature">str.toUpperCase()</div>
+        </div>
+        <div class="card-body">
+          <div class="method-meta">
+            <div class="meta-item">
+              <i class="fas fa-cog"></i>
+              <span>Returns: String</span>
+            </div>
+            <div class="meta-item">
+              <i class="fas fa-tag"></i>
+              <span>Conversion</span>
+            </div>
+          </div>
+          <p class="method-desc">Converts all of the characters in this String to upper case using the rules of the default locale.</p>
+          <div class="example-toggle" onclick="toggleExample(this)">
+            <i class="fas fa-chevron-down"></i>
+            <span>View Example</span>
+          </div>
+          <div class="code-example">
+String str = "Hello World";
+String upper = str.toUpperCase();
+System.out.println(upper); 
+// Output: HELLO WORLD</div>
+        </div>
+      </div>
+
+      <!-- Utility Methods -->
+      <div class="method-card" data-category="utility">
+        <div class="card-header">
+          <h3>length()</h3>
+          <div class="method-signature">str.length()</div>
+        </div>
+        <div class="card-body">
+          <div class="method-meta">
+            <div class="meta-item">
+              <i class="fas fa-cog"></i>
+              <span>Returns: int</span>
+            </div>
+            <div class="meta-item">
+              <i class="fas fa-tag"></i>
+              <span>Utility</span>
+            </div>
+          </div>
+          <p class="method-desc">Returns the length of this string. The length is equal to the number of Unicode code units in the string.</p>
+          <div class="example-toggle" onclick="toggleExample(this)">
+            <i class="fas fa-chevron-down"></i>
+            <span>View Example</span>
+          </div>
+          <div class="code-example">
+String str = "Java";
+int length = str.length();
+System.out.println(length); 
+// Output: 4</div>
+        </div>
+      </div>
+
+      <div class="method-card" data-category="utility">
+        <div class="card-header">
+          <h3>trim()</h3>
+          <div class="method-signature">str.trim()</div>
+        </div>
+        <div class="card-body">
+          <div class="method-meta">
+            <div class="meta-item">
+              <i class="fas fa-cog"></i>
+              <span>Returns: String</span>
+            </div>
+            <div class="meta-item">
+              <i class="fas fa-tag"></i>
+              <span>Utility</span>
+            </div>
+          </div>
+          <p class="method-desc">Returns a string whose value is this string, with any leading and trailing whitespace removed.</p>
+          <div class="example-toggle" onclick="toggleExample(this)">
+            <i class="fas fa-chevron-down"></i>
+            <span>View Example</span>
+          </div>
+          <div class="code-example">
+String str = "   Hello World   ";
+String trimmed = str.trim();
+System.out.println("|" + trimmed + "|"); 
+// Output: |Hello World|</div>
+        </div>
+      </div>
+
+      <!-- Additional Methods -->
+      <div class="method-card" data-category="searching">
+        <div class="card-header">
+          <h3>contains()</h3>
+          <div class="method-signature">str.contains(substring)</div>
+        </div>
+        <div class="card-body">
+          <div class="method-meta">
+            <div class="meta-item">
+              <i class="fas fa-cog"></i>
+              <span>Returns: boolean</span>
+            </div>
+            <div class="meta-item">
+              <i class="fas fa-tag"></i>
+              <span>Searching</span>
+            </div>
+          </div>
+          <p class="method-desc">Returns true if and only if this string contains the specified sequence of char values.</p>
+          <div class="example-toggle" onclick="toggleExample(this)">
+            <i class="fas fa-chevron-down"></i>
+            <span>View Example</span>
+          </div>
+          <div class="code-example">
+String str = "Hello World";
+boolean contains = str.contains("World");
+System.out.println(contains); 
+// Output: true</div>
+        </div>
+      </div>
+
+      <div class="method-card" data-category="manipulation">
+        <div class="card-header">
+          <h3>concat()</h3>
+          <div class="method-signature">str.concat(string)</div>
+        </div>
+        <div class="card-body">
+          <div class="method-meta">
+            <div class="meta-item">
+              <i class="fas fa-cog"></i>
+              <span>Returns: String</span>
+            </div>
+            <div class="meta-item">
+              <i class="fas fa-tag"></i>
+              <span>Manipulation</span>
+            </div>
+          </div>
+          <p class="method-desc">Concatenates the specified string to the end of this string.</p>
+          <div class="example-toggle" onclick="toggleExample(this)">
+            <i class="fas fa-chevron-down"></i>
+            <span>View Example</span>
+          </div>
+          <div class="code-example">
+String str1 = "Hello";
+String str2 = " World";
+String result = str1.concat(str2);
+System.out.println(result); 
+// Output: Hello World</div>
+        </div>
+      </div>
+
+      <div class="method-card" data-category="conversion">
+        <div class="card-header">
+          <h3>valueOf()</h3>
+          <div class="method-signature">String.valueOf(object)</div>
+        </div>
+        <div class="card-body">
+          <div class="method-meta">
+            <div class="meta-item">
+              <i class="fas fa-cog"></i>
+              <span>Returns: String</span>
+            </div>
+            <div class="meta-item">
+              <i class="fas fa-tag"></i>
+              <span>Conversion</span>
+            </div>
+          </div>
+          <p class="method-desc">Returns the string representation of the various data types. This is a static method.</p>
+          <div class="example-toggle" onclick="toggleExample(this)">
+            <i class="fas fa-chevron-down"></i>
+            <span>View Example</span>
+          </div>
+          <div class="code-example">
+int num = 42;
+double pi = 3.14159;
+String s1 = String.valueOf(num);
+String s2 = String.valueOf(pi);
+System.out.println(s1); // 42
+System.out.println(s2); // 3.14159</div>
+        </div>
+      </div>
+
+      <div class="method-card" data-category="utility">
+        <div class="card-header">
+          <h3>isEmpty()</h3>
+          <div class="method-signature">str.isEmpty()</div>
+        </div>
+        <div class="card-body">
+          <div class="method-meta">
+            <div class="meta-item">
+              <i class="fas fa-cog"></i>
+              <span>Returns: boolean</span>
+            </div>
+            <div class="meta-item">
+              <i class="fas fa-tag"></i>
+              <span>Utility</span>
+            </div>
+          </div>
+          <p class="method-desc">Returns true if, and only if, length() is 0.</p>
+          <div class="example-toggle" onclick="toggleExample(this)">
+            <i class="fas fa-chevron-down"></i>
+            <span>View Example</span>
+          </div>
+          <div class="code-example">
+String str1 = "";
+String str2 = "Hello";
+System.out.println(str1.isEmpty()); // true
+System.out.println(str2.isEmpty()); // false</div>
+        </div>
+      </div>
+    </div>
+
+    <footer>
+      <p>Java String Methods Cheat Sheet &copy; 2023 | Designed for Java Developers</p>
+      <p>Includes methods from Java 8 to Java 17</p>
+    </footer>
+  </div>
+
+  <script>
+    // Theme toggle functionality
+    const themeToggle = document.getElementById('themeToggle');
+    themeToggle.addEventListener('click', () => {
+      document.body.classList.toggle('dark-mode');
+      
+      if (document.body.classList.contains('dark-mode')) {
+        themeToggle.innerHTML = '<i class="fas fa-sun"></i> <span>Light Mode</span>';
+      } else {
+        themeToggle.innerHTML = '<i class="fas fa-moon"></i> <span>Dark Mode</span>';
+      }
+    });
+
+    // Example toggle functionality
+    function toggleExample(element) {
+      const example = element.nextElementSibling;
+      element.classList.toggle('active');
+      
+      if (example.style.display === 'block') {
+        example.style.display = 'none';
+      } else {
+        example.style.display = 'block';
+        example.classList.add('show');
+      }
+    }
+
+    // Category filtering
+    const categoryButtons = document.querySelectorAll('.category-btn');
+    const methodCards = document.querySelectorAll('.method-card');
+    
+    categoryButtons.forEach(button => {
+      button.addEventListener('click', () => {
+        // Remove active class from all buttons
+        categoryButtons.forEach(btn => btn.classList.remove('active'));
+        
+        // Add active class to clicked button
+        button.classList.add('active');
+        
+        const category = button.getAttribute('data-category');
+        
+        // Filter cards
+        methodCards.forEach(card => {
+          if (category === 'all' || card.getAttribute('data-category') === category) {
+            card.style.display = 'block';
+          } else {
+            card.style.display = 'none';
+          }
+        });
+      });
+    });
+  </script>
+</body>
+</html>

@@ -1,0 +1,1032 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Modern Java Arrays Cheat Sheet</title>
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+  <style>
+    :root {
+      --primary: #4a6fa5;
+      --secondary: #6b8cae;
+      --accent: #ff6b6b;
+      --light: #f8f9fa;
+      --dark: #212529;
+      --success: #51cf66;
+      --warning: #fcc419;
+      --info: #22b8cf;
+      --border: #dee2e6;
+      --card-bg: #ffffff;
+      --code-bg: #f1f3f5;
+      --header-bg: #4a6fa5;
+      --shadow: 0 4px 12px rgba(0, 0, 0, 0.08);
+      --transition: all 0.3s ease;
+    }
+
+    .dark-mode {
+      --primary: #6c9bcf;
+      --secondary: #8fb3d9;
+      --accent: #ff8e8e;
+      --light: #1a1d21;
+      --dark: #e9ecef;
+      --card-bg: #23272e;
+      --code-bg: #2c303a;
+      --border: #444b59;
+      --header-bg: #23272e;
+      --shadow: 0 4px 12px rgba(0, 0, 0, 0.3);
+    }
+
+    * {
+      margin: 0;
+      padding: 0;
+      box-sizing: border-box;
+      transition: var(--transition);
+    }
+
+    body {
+      font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+      background-color: var(--light);
+      color: var(--dark);
+      line-height: 1.6;
+      padding: 20px;
+      max-width: 1400px;
+      margin: 0 auto;
+    }
+
+    .container {
+      display: grid;
+      grid-template-columns: 250px 1fr;
+      gap: 25px;
+    }
+
+    header {
+      background: linear-gradient(135deg, var(--primary), var(--secondary));
+      color: white;
+      padding: 25px;
+      border-radius: 15px;
+      margin-bottom: 30px;
+      box-shadow: var(--shadow);
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      grid-column: 1 / -1;
+    }
+
+    .header-content {
+      display: flex;
+      align-items: center;
+      gap: 20px;
+    }
+
+    h1 {
+      font-size: 2.4rem;
+      font-weight: 700;
+      margin: 0;
+    }
+
+    .tagline {
+      font-size: 1.1rem;
+      opacity: 0.9;
+      margin-top: 8px;
+    }
+
+    .logo {
+      font-size: 3.5rem;
+      color: white;
+    }
+
+    .theme-toggle {
+      background: rgba(255, 255, 255, 0.15);
+      border: none;
+      color: white;
+      padding: 10px 20px;
+      border-radius: 50px;
+      cursor: pointer;
+      display: flex;
+      align-items: center;
+      gap: 10px;
+      font-weight: 600;
+      transition: all 0.3s;
+    }
+
+    .theme-toggle:hover {
+      background: rgba(255, 255, 255, 0.25);
+      transform: translateY(-2px);
+    }
+
+    .sidebar {
+      background: var(--card-bg);
+      border-radius: 15px;
+      padding: 25px;
+      box-shadow: var(--shadow);
+      height: fit-content;
+      position: sticky;
+      top: 20px;
+    }
+
+    .sidebar h2 {
+      color: var(--primary);
+      font-size: 1.4rem;
+      margin-bottom: 20px;
+      padding-bottom: 10px;
+      border-bottom: 2px solid var(--border);
+    }
+
+    .category-list {
+      list-style: none;
+    }
+
+    .category-item {
+      padding: 12px 15px;
+      margin-bottom: 10px;
+      border-radius: 10px;
+      cursor: pointer;
+      display: flex;
+      align-items: center;
+      gap: 12px;
+      font-weight: 500;
+      transition: background-color 0.2s;
+    }
+
+    .category-item:hover {
+      background: rgba(74, 111, 165, 0.1);
+    }
+
+    .category-item.active {
+      background: var(--primary);
+      color: white;
+    }
+
+    .content {
+      display: grid;
+      grid-template-columns: repeat(auto-fill, minmax(340px, 1fr));
+      gap: 25px;
+      margin-bottom: 40px;
+    }
+
+    .category-section {
+      display: none;
+    }
+
+    .category-section.active {
+      display: block;
+      grid-column: 1 / -1;
+    }
+
+    .section-header {
+      display: flex;
+      align-items: center;
+      gap: 15px;
+      margin-bottom: 25px;
+      padding-bottom: 15px;
+      border-bottom: 2px solid var(--border);
+    }
+
+    .section-icon {
+      font-size: 1.8rem;
+      color: var(--primary);
+    }
+
+    .section-title {
+      font-size: 1.8rem;
+      color: var(--primary);
+    }
+
+    .method-card {
+      background: var(--card-bg);
+      border-radius: 15px;
+      box-shadow: var(--shadow);
+      overflow: hidden;
+      transition: transform 0.3s;
+      height: 100%;
+      display: flex;
+      flex-direction: column;
+    }
+
+    .method-card:hover {
+      transform: translateY(-5px);
+      box-shadow: 0 8px 16px rgba(0, 0, 0, 0.15);
+    }
+
+    .card-header {
+      background: rgba(74, 111, 165, 0.1);
+      padding: 18px;
+      border-bottom: 1px solid var(--border);
+    }
+
+    .method-name {
+      font-family: 'Consolas', 'Courier New', monospace;
+      font-size: 1.1rem;
+      font-weight: 700;
+      color: var(--primary);
+      margin-bottom: 5px;
+    }
+
+    .method-args {
+      font-size: 0.9rem;
+      color: var(--secondary);
+    }
+
+    .card-body {
+      padding: 18px;
+      flex-grow: 1;
+    }
+
+    .method-desc {
+      color: var(--dark);
+      margin-bottom: 15px;
+      line-height: 1.5;
+    }
+
+    .card-footer {
+      padding: 0 18px 18px;
+    }
+
+    .example-btn {
+      background: var(--primary);
+      color: white;
+      border: none;
+      padding: 10px 20px;
+      border-radius: 8px;
+      cursor: pointer;
+      display: flex;
+      align-items: center;
+      gap: 8px;
+      font-weight: 600;
+      width: 100%;
+      justify-content: center;
+      transition: background 0.3s;
+    }
+
+    .example-btn:hover {
+      background: var(--secondary);
+    }
+
+    .example-code {
+      background: var(--code-bg);
+      border-radius: 8px;
+      padding: 20px;
+      font-family: 'Consolas', 'Courier New', monospace;
+      font-size: 0.95rem;
+      line-height: 1.6;
+      white-space: pre-wrap;
+      margin-top: 15px;
+      display: none;
+      border-left: 4px solid var(--accent);
+    }
+
+    .example-code.active {
+      display: block;
+    }
+
+    .footer {
+      text-align: center;
+      padding: 25px;
+      margin-top: 30px;
+      border-top: 1px solid var(--border);
+      color: var(--secondary);
+      grid-column: 1 / -1;
+    }
+
+    .footer p {
+      margin: 5px 0;
+    }
+
+    .highlight {
+      background: rgba(255, 215, 0, 0.2);
+      padding: 2px 4px;
+      border-radius: 4px;
+      font-weight: 600;
+    }
+
+    .method-grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fill, minmax(340px, 1fr));
+      gap: 25px;
+    }
+
+    @media (max-width: 900px) {
+      .container {
+        grid-template-columns: 1fr;
+      }
+      
+      .sidebar {
+        position: static;
+        margin-bottom: 25px;
+      }
+    }
+
+    @media (max-width: 600px) {
+      header {
+        flex-direction: column;
+        text-align: center;
+        gap: 15px;
+      }
+      
+      .header-content {
+        flex-direction: column;
+      }
+      
+      .content {
+        grid-template-columns: 1fr;
+      }
+      
+      .method-grid {
+        grid-template-columns: 1fr;
+      }
+    }
+  </style>
+</head>
+<body>
+  <header>
+    <div class="header-content">
+      <div class="logo">
+        <i class="fas fa-code"></i>
+      </div>
+      <div>
+        <h1>Java Arrays Cheat Sheet</h1>
+        <p class="tagline">Essential methods from Java 8 to Java 17</p>
+      </div>
+    </div>
+    <button class="theme-toggle" id="themeBtn">
+      <i class="fas fa-moon"></i> Dark Mode
+    </button>
+  </header>
+
+  <div class="container">
+    <aside class="sidebar">
+      <h2>Categories</h2>
+      <ul class="category-list">
+        <li class="category-item active" data-category="sorting">
+          <i class="fas fa-sort-amount-down"></i> Sorting
+        </li>
+        <li class="category-item" data-category="searching">
+          <i class="fas fa-search"></i> Searching
+        </li>
+        <li class="category-item" data-category="comparing">
+          <i class="fas fa-balance-scale"></i> Comparing
+        </li>
+        <li class="category-item" data-category="copying">
+          <i class="fas fa-copy"></i> Copying & Filling
+        </li>
+        <li class="category-item" data-category="conversion">
+          <i class="fas fa-exchange-alt"></i> Conversion
+        </li>
+        <li class="category-item" data-category="utility">
+          <i class="fas fa-tools"></i> Utility
+        </li>
+      </ul>
+    </aside>
+
+    <main class="content">
+      <!-- Sorting Section -->
+      <section class="category-section active" id="sorting-section">
+        <div class="section-header">
+          <div class="section-icon">
+            <i class="fas fa-sort-amount-down"></i>
+          </div>
+          <h2 class="section-title">Sorting Methods</h2>
+        </div>
+        
+        <div class="method-grid">
+          <div class="method-card">
+            <div class="card-header">
+              <div class="method-name">sort(array)</div>
+              <div class="method-args">Arguments: 1</div>
+            </div>
+            <div class="card-body">
+              <p class="method-desc">Sorts the entire array into ascending order.</p>
+            </div>
+            <div class="card-footer">
+              <button class="example-btn">
+                <i class="fas fa-code"></i> Show Example
+              </button>
+              <pre class="example-code">// Sort an entire array
+int[] nums = {5, 2, 1};
+Arrays.sort(nums);
+System.out.println(Arrays.toString(nums)); 
+// Output: [1, 2, 5]</pre>
+            </div>
+          </div>
+          
+          <div class="method-card">
+            <div class="card-header">
+              <div class="method-name">sort(array, from, to)</div>
+              <div class="method-args">Arguments: 3</div>
+            </div>
+            <div class="card-body">
+              <p class="method-desc">Sorts the specified range of the array into ascending order.</p>
+            </div>
+            <div class="card-footer">
+              <button class="example-btn">
+                <i class="fas fa-code"></i> Show Example
+              </button>
+              <pre class="example-code">// Sort a subrange
+int[] nums = {9, 8, 7, 6};
+Arrays.sort(nums, 1, 3); // Sort indices 1 to 2
+System.out.println(Arrays.toString(nums)); 
+// Output: [9, 7, 8, 6]</pre>
+            </div>
+          </div>
+          
+          <div class="method-card">
+            <div class="card-header">
+              <div class="method-name">parallelSort(array)</div>
+              <div class="method-args">Arguments: 1</div>
+            </div>
+            <div class="card-body">
+              <p class="method-desc">Sorts the array using parallel sort (multi-threading).</p>
+            </div>
+            <div class="card-footer">
+              <button class="example-btn">
+                <i class="fas fa-code"></i> Show Example
+              </button>
+              <pre class="example-code">// Parallel sort entire array
+int[] nums = {3, 1, 2, 6, 4, 5};
+Arrays.parallelSort(nums);
+System.out.println(Arrays.toString(nums)); 
+// Output: [1, 2, 3, 4, 5, 6]</pre>
+            </div>
+          </div>
+          
+          <div class="method-card">
+            <div class="card-header">
+              <div class="method-name">parallelSort(array, from, to)</div>
+              <div class="method-args">Arguments: 3</div>
+            </div>
+            <div class="card-body">
+              <p class="method-desc">Sorts the specified range of the array using parallel sort.</p>
+            </div>
+            <div class="card-footer">
+              <button class="example-btn">
+                <i class="fas fa-code"></i> Show Example
+              </button>
+              <pre class="example-code">// Parallel sort subrange
+int[] nums = {10, 7, 4, 1, 9, 2};
+Arrays.parallelSort(nums, 1, 4); // Sort indices 1 to 3
+System.out.println(Arrays.toString(nums)); 
+// Output: [10, 1, 4, 7, 9, 2]</pre>
+            </div>
+          </div>
+        </div>
+      </section>
+
+      <!-- Searching Section -->
+      <section class="category-section" id="searching-section">
+        <div class="section-header">
+          <div class="section-icon">
+            <i class="fas fa-search"></i>
+          </div>
+          <h2 class="section-title">Searching Methods</h2>
+        </div>
+        
+        <div class="method-grid">
+          <div class="method-card">
+            <div class="card-header">
+              <div class="method-name">binarySearch(array, key)</div>
+              <div class="method-args">Arguments: 2</div>
+            </div>
+            <div class="card-body">
+              <p class="method-desc">Searches the specified array for the specified key using binary search.</p>
+            </div>
+            <div class="card-footer">
+              <button class="example-btn">
+                <i class="fas fa-code"></i> Show Example
+              </button>
+              <pre class="example-code">// Binary search entire array
+int[] nums = {1, 3, 5, 7};
+int index = Arrays.binarySearch(nums, 5);
+System.out.println(index); 
+// Output: 2</pre>
+            </div>
+          </div>
+          
+          <div class="method-card">
+            <div class="card-header">
+              <div class="method-name">binarySearch(array, from, to, key)</div>
+              <div class="method-args">Arguments: 4</div>
+            </div>
+            <div class="card-body">
+              <p class="method-desc">Searches a range of the array for the specified key using binary search.</p>
+            </div>
+            <div class="card-footer">
+              <button class="example-btn">
+                <i class="fas fa-code"></i> Show Example
+              </button>
+              <pre class="example-code">// Binary search in subrange
+int[] nums = {1, 3, 5, 7, 9};
+int idx = Arrays.binarySearch(nums, 1, 4, 7);
+System.out.println(idx); 
+// Output: 3</pre>
+            </div>
+          </div>
+        </div>
+      </section>
+      
+      <!-- Comparing Section -->
+      <section class="category-section" id="comparing-section">
+        <div class="section-header">
+          <div class="section-icon">
+            <i class="fas fa-balance-scale"></i>
+          </div>
+          <h2 class="section-title">Comparing Methods</h2>
+        </div>
+        
+        <div class="method-grid">
+          <div class="method-card">
+            <div class="card-header">
+              <div class="method-name">equals(array1, array2)</div>
+              <div class="method-args">Arguments: 2</div>
+            </div>
+            <div class="card-body">
+              <p class="method-desc">Checks if two arrays are equal (same elements in same order).</p>
+            </div>
+            <div class="card-footer">
+              <button class="example-btn">
+                <i class="fas fa-code"></i> Show Example
+              </button>
+              <pre class="example-code">// Compare arrays
+int[] a = {1, 2}, b = {1, 2};
+boolean equal = Arrays.equals(a, b);
+System.out.println(equal); 
+// Output: true</pre>
+            </div>
+          </div>
+          
+          <div class="method-card">
+            <div class="card-header">
+              <div class="method-name">deepEquals(array1, array2)</div>
+              <div class="method-args">Arguments: 2</div>
+            </div>
+            <div class="card-body">
+              <p class="method-desc">Deep comparison for multi-dimensional arrays.</p>
+            </div>
+            <div class="card-footer">
+              <button class="example-btn">
+                <i class="fas fa-code"></i> Show Example
+              </button>
+              <pre class="example-code">// Compare multidimensional arrays
+int[][] a = {{1,2}}, b = {{1,2}};
+boolean deepEqual = Arrays.deepEquals(a, b);
+System.out.println(deepEqual); 
+// Output: true</pre>
+            </div>
+          </div>
+          
+          <div class="method-card">
+            <div class="card-header">
+              <div class="method-name">compare(array1, array2)</div>
+              <div class="method-args">Arguments: 2</div>
+            </div>
+            <div class="card-body">
+              <p class="method-desc">Lexicographic comparison of two arrays.</p>
+            </div>
+            <div class="card-footer">
+              <button class="example-btn">
+                <i class="fas fa-code"></i> Show Example
+              </button>
+              <pre class="example-code">// Lexicographic comparison
+int[] a = {1,2}, b = {1,3};
+int result = Arrays.compare(a, b);
+System.out.println(result); 
+// Output: -1</pre>
+            </div>
+          </div>
+          
+          <div class="method-card">
+            <div class="card-header">
+              <div class="method-name">mismatch(array1, array2)</div>
+              <div class="method-args">Arguments: 2</div>
+            </div>
+            <div class="card-body">
+              <p class="method-desc">Finds the first index where arrays differ.</p>
+            </div>
+            <div class="card-footer">
+              <button class="example-btn">
+                <i class="fas fa-code"></i> Show Example
+              </button>
+              <pre class="example-code">// Find first mismatch
+int[] a = {1,2,3}, b = {1,2,4};
+int mismatch = Arrays.mismatch(a, b);
+System.out.println(mismatch); 
+// Output: 2</pre>
+            </div>
+          </div>
+        </div>
+      </section>
+      
+      <!-- Copying & Filling Section -->
+      <section class="category-section" id="copying-section">
+        <div class="section-header">
+          <div class="section-icon">
+            <i class="fas fa-copy"></i>
+          </div>
+          <h2 class="section-title">Copying & Filling Methods</h2>
+        </div>
+        
+        <div class="method-grid">
+          <div class="method-card">
+            <div class="card-header">
+              <div class="method-name">copyOf(array, newLength)</div>
+              <div class="method-args">Arguments: 2</div>
+            </div>
+            <div class="card-body">
+              <p class="method-desc">Copies array to a new array of specified length.</p>
+            </div>
+            <div class="card-footer">
+              <button class="example-btn">
+                <i class="fas fa-code"></i> Show Example
+              </button>
+              <pre class="example-code">// Copy array with new length
+int[] nums = {1, 2, 3};
+int[] copy = Arrays.copyOf(nums, 5);
+System.out.println(Arrays.toString(copy)); 
+// Output: [1, 2, 3, 0, 0]</pre>
+            </div>
+          </div>
+          
+          <div class="method-card">
+            <div class="card-header">
+              <div class="method-name">copyOfRange(array, from, to)</div>
+              <div class="method-args">Arguments: 3</div>
+            </div>
+            <div class="card-body">
+              <p class="method-desc">Copies a subrange of the array.</p>
+            </div>
+            <div class="card-footer">
+              <button class="example-btn">
+                <i class="fas fa-code"></i> Show Example
+              </button>
+              <pre class="example-code">// Copy subrange of array
+int[] nums = {1,2,3,4,5};
+int[] sub = Arrays.copyOfRange(nums, 1, 4);
+System.out.println(Arrays.toString(sub)); 
+// Output: [2, 3, 4]</pre>
+            </div>
+          </div>
+          
+          <div class="method-card">
+            <div class="card-header">
+              <div class="method-name">fill(array, value)</div>
+              <div class="method-args">Arguments: 2</div>
+            </div>
+            <div class="card-body">
+              <p class="method-desc">Fills entire array with the specified value.</p>
+            </div>
+            <div class="card-footer">
+              <button class="example-btn">
+                <i class="fas fa-code"></i> Show Example
+              </button>
+              <pre class="example-code">// Fill entire array
+int[] filled = new int[4];
+Arrays.fill(filled, 7);
+System.out.println(Arrays.toString(filled)); 
+// Output: [7, 7, 7, 7]</pre>
+            </div>
+          </div>
+          
+          <div class="method-card">
+            <div class="card-header">
+              <div class="method-name">fill(array, from, to, value)</div>
+              <div class="method-args">Arguments: 4</div>
+            </div>
+            <div class="card-body">
+              <p class="method-desc">Fills part of the array with the specified value.</p>
+            </div>
+            <div class="card-footer">
+              <button class="example-btn">
+                <i class="fas fa-code"></i> Show Example
+              </button>
+              <pre class="example-code">// Fill subrange of array
+int[] nums = {1,2,3,4};
+Arrays.fill(nums, 1, 3, 9);
+System.out.println(Arrays.toString(nums)); 
+// Output: [1, 9, 9, 4]</pre>
+            </div>
+          </div>
+          
+          <div class="method-card">
+            <div class="card-header">
+              <div class="method-name">setAll(array, generator)</div>
+              <div class="method-args">Arguments: 2</div>
+            </div>
+            <div class="card-body">
+              <p class="method-desc">Sets values using a generator function.</p>
+            </div>
+            <div class="card-footer">
+              <button class="example-btn">
+                <i class="fas fa-code"></i> Show Example
+              </button>
+              <pre class="example-code">// Set values with generator
+int[] nums = new int[5];
+Arrays.setAll(nums, i -> i * i);
+System.out.println(Arrays.toString(nums)); 
+// Output: [0, 1, 4, 9, 16]</pre>
+            </div>
+          </div>
+          
+          <div class="method-card">
+            <div class="card-header">
+              <div class="method-name">parallelSetAll(array, generator)</div>
+              <div class="method-args">Arguments: 2</div>
+            </div>
+            <div class="card-body">
+              <p class="method-desc">Parallel version of setAll.</p>
+            </div>
+            <div class="card-footer">
+              <button class="example-btn">
+                <i class="fas fa-code"></i> Show Example
+              </button>
+              <pre class="example-code">// Parallel set values
+int[] nums = new int[5];
+Arrays.parallelSetAll(nums, i -> i + 10);
+System.out.println(Arrays.toString(nums)); 
+// Output: [10, 11, 12, 13, 14]</pre>
+            </div>
+          </div>
+        </div>
+      </section>
+      
+      <!-- Conversion Section -->
+      <section class="category-section" id="conversion-section">
+        <div class="section-header">
+          <div class="section-icon">
+            <i class="fas fa-exchange-alt"></i>
+          </div>
+          <h2 class="section-title">Conversion Methods</h2>
+        </div>
+        
+        <div class="method-grid">
+          <div class="method-card">
+            <div class="card-header">
+              <div class="method-name">asList(...elements)</div>
+              <div class="method-args">Arguments: Varargs</div>
+            </div>
+            <div class="card-body">
+              <p class="method-desc">Converts array to a fixed-size list.</p>
+            </div>
+            <div class="card-footer">
+              <button class="example-btn">
+                <i class="fas fa-code"></i> Show Example
+              </button>
+              <pre class="example-code">// Convert array to list
+String[] data = {"a", "b"};
+List&lt;String&gt; list = Arrays.asList(data);
+System.out.println(list); 
+// Output: [a, b]</pre>
+            </div>
+          </div>
+          
+          <div class="method-card">
+            <div class="card-header">
+              <div class="method-name">toString(array)</div>
+              <div class="method-args">Arguments: 1</div>
+            </div>
+            <div class="card-body">
+              <p class="method-desc">Converts 1D array to a readable string.</p>
+            </div>
+            <div class="card-footer">
+              <button class="example-btn">
+                <i class="fas fa-code"></i> Show Example
+              </button>
+              <pre class="example-code">// Convert 1D array to string
+int[] nums = {1,2,3};
+System.out.println(Arrays.toString(nums)); 
+// Output: [1, 2, 3]</pre>
+            </div>
+          </div>
+          
+          <div class="method-card">
+            <div class="card-header">
+              <div class="method-name">deepToString(array)</div>
+              <div class="method-args">Arguments: 1</div>
+            </div>
+            <div class="card-body">
+              <p class="method-desc">Converts multi-dimensional array to string.</p>
+            </div>
+            <div class="card-footer">
+              <button class="example-btn">
+                <i class="fas fa-code"></i> Show Example
+              </button>
+              <pre class="example-code">// Convert 2D array to string
+int[][] matrix = {{1,2},{3,4}};
+System.out.println(Arrays.deepToString(matrix)); 
+// Output: [[1, 2], [3, 4]]</pre>
+            </div>
+          </div>
+          
+          <div class="method-card">
+            <div class="card-header">
+              <div class="method-name">hashCode(array)</div>
+              <div class="method-args">Arguments: 1</div>
+            </div>
+            <div class="card-body">
+              <p class="method-desc">Returns hash code for 1D array.</p>
+            </div>
+            <div class="card-footer">
+              <button class="example-btn">
+                <i class="fas fa-code"></i> Show Example
+              </button>
+              <pre class="example-code">// Get hash code of array
+int[] nums = {1,2,3};
+System.out.println(Arrays.hashCode(nums)); 
+// Output: 30817</pre>
+            </div>
+          </div>
+          
+          <div class="method-card">
+            <div class="card-header">
+              <div class="method-name">deepHashCode(array)</div>
+              <div class="method-args">Arguments: 1</div>
+            </div>
+            <div class="card-body">
+              <p class="method-desc">Returns hash code for multi-dimensional array.</p>
+            </div>
+            <div class="card-footer">
+              <button class="example-btn">
+                <i class="fas fa-code"></i> Show Example
+              </button>
+              <pre class="example-code">// Get deep hash code
+int[][] grid = {{1,2}};
+System.out.println(Arrays.deepHashCode(grid)); 
+// Output: 994</pre>
+            </div>
+          </div>
+          
+          <div class="method-card">
+            <div class="card-header">
+              <div class="method-name">stream(array)</div>
+              <div class="method-args">Arguments: 1</div>
+            </div>
+            <div class="card-body">
+              <p class="method-desc">Creates stream from array elements.</p>
+            </div>
+            <div class="card-footer">
+              <button class="example-btn">
+                <i class="fas fa-code"></i> Show Example
+              </button>
+              <pre class="example-code">// Create stream from array
+int[] nums = {1,2,3};
+int sum = Arrays.stream(nums).sum();
+System.out.println(sum); 
+// Output: 6</pre>
+            </div>
+          </div>
+          
+          <div class="method-card">
+            <div class="card-header">
+              <div class="method-name">spliterator(array)</div>
+              <div class="method-args">Arguments: 1</div>
+            </div>
+            <div class="card-body">
+              <p class="method-desc">Creates spliterator from array.</p>
+            </div>
+            <div class="card-footer">
+              <button class="example-btn">
+                <i class="fas fa-code"></i> Show Example
+              </button>
+              <pre class="example-code">// Create spliterator
+int[] nums = {1,2,3};
+Spliterator.OfInt sp = Arrays.spliterator(nums);
+sp.forEachRemaining((int n) -> System.out.print(n + " ")); 
+// Output: 1 2 3</pre>
+            </div>
+          </div>
+        </div>
+      </section>
+      
+      <!-- Utility Section -->
+      <section class="category-section" id="utility-section">
+        <div class="section-header">
+          <div class="section-icon">
+            <i class="fas fa-tools"></i>
+          </div>
+          <h2 class="section-title">Utility Methods</h2>
+        </div>
+        
+        <div class="method-grid">
+          <div class="method-card">
+            <div class="card-header">
+              <div class="method-name">parallelPrefix(array, op)</div>
+              <div class="method-args">Arguments: 2</div>
+            </div>
+            <div class="card-body">
+              <p class="method-desc">Performs parallel prefix operation on array.</p>
+            </div>
+            <div class="card-footer">
+              <button class="example-btn">
+                <i class="fas fa-code"></i> Show Example
+              </button>
+              <pre class="example-code">// Parallel prefix (cumulative product)
+int[] nums = {1, 2, 3, 4};
+Arrays.parallelPrefix(nums, (a, b) -> a * b);
+System.out.println(Arrays.toString(nums)); 
+// Output: [1, 2, 6, 24]</pre>
+            </div>
+          </div>
+          
+          <div class="method-card">
+            <div class="card-header">
+              <div class="method-name">equals(array, start, end, other, oStart, oEnd)</div>
+              <div class="method-args">Arguments: 6</div>
+            </div>
+            <div class="card-body">
+              <p class="method-desc">Compares ranges of two arrays.</p>
+            </div>
+            <div class="card-footer">
+              <button class="example-btn">
+                <i class="fas fa-code"></i> Show Example
+              </button>
+              <pre class="example-code">// Compare array ranges
+int[] a = {1,2,3,4}, b = {0,2,3,5};
+boolean rangeEqual = Arrays.equals(a, 1, 3, b, 1, 3);
+System.out.println(rangeEqual); 
+// Output: true</pre>
+            </div>
+          </div>
+          
+          <div class="method-card">
+            <div class="card-header">
+              <div class="method-name">compare(array, start, end, other, oStart, oEnd)</div>
+              <div class="method-args">Arguments: 6</div>
+            </div>
+            <div class="card-body">
+              <p class="method-desc">Lexicographic comparison of array ranges.</p>
+            </div>
+            <div class="card-footer">
+              <button class="example-btn">
+                <i class="fas fa-code"></i> Show Example
+              </button>
+              <pre class="example-code">// Lex compare array ranges
+int[] a = {1,2,3}, b = {1,2,4};
+int comp = Arrays.compare(a, 0, 2, b, 0, 2);
+System.out.println(comp); 
+// Output: 0 (equal)</pre>
+            </div>
+          </div>
+        </div>
+      </section>
+    </main>
+  </div>
+
+  <footer class="footer">
+    <p>Java Arrays Cheat Sheet | Includes methods from Java 8 to Java 17</p>
+    <p>Tip: Click on any example button to see the code implementation</p>
+    <p class="highlight">Designed with modern UI principles for better developer experience</p>
+  </footer>
+
+  <script>
+    // Theme toggle functionality
+    const themeBtn = document.getElementById('themeBtn');
+    themeBtn.addEventListener('click', toggleTheme);
+    
+    function toggleTheme() {
+      document.body.classList.toggle('dark-mode');
+      if (document.body.classList.contains('dark-mode')) {
+        themeBtn.innerHTML = '<i class="fas fa-sun"></i> Light Mode';
+      } else {
+        themeBtn.innerHTML = '<i class="fas fa-moon"></i> Dark Mode';
+      }
+    }
+    
+    // Category navigation
+    const categoryItems = document.querySelectorAll('.category-item');
+    categoryItems.forEach(item => {
+      item.addEventListener('click', () => {
+        // Remove active class from all items
+        categoryItems.forEach(i => i.classList.remove('active'));
+        // Add active class to clicked item
+        item.classList.add('active');
+        // Show corresponding section
+        const category = item.dataset.category;
+        document.querySelectorAll('.category-section').forEach(section => {
+          section.classList.remove('active');
+        });
+        document.getElementById(`${category}-section`).classList.add('active');
+      });
+    });
+    
+    // Example toggle functionality
+    const exampleBtns = document.querySelectorAll('.example-btn');
+    exampleBtns.forEach(btn => {
+      btn.addEventListener('click', () => {
+        const exampleCode = btn.nextElementSibling;
+        const isActive = exampleCode.classList.contains('active');
+        
+        // Close all other examples
+        document.querySelectorAll('.example-code').forEach(code => {
+          code.classList.remove('active');
+        });
+        
+        // Toggle current example
+        exampleCode.classList.toggle('active', !isActive);
+        
+        // Scroll to the example if opening
+        if (!isActive) {
+          exampleCode.scrollIntoView({ behavior: 'smooth', block: 'nearest' });
+        }
+      });
+    });
+  </script>
+</body>
+</html>

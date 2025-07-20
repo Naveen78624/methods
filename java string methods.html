@@ -1,0 +1,1977 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Modern Java String Methods Cheat Sheet</title>
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+  <style>
+    /* Define CSS variables for theme colors */
+    :root {
+      --primary: #3498db; /* A more neutral blue */
+      --secondary: #2980b9;
+      --accent: #e74c3c; /* Red for highlights */
+      --light: #f4f7f6; /* Lighter background */
+      --dark: #34495e; /* Darker text */
+      --success: #2ecc71;
+      --warning: #f1c40f;
+      --info: #3498db;
+      --border: #ecf0f1; /* Lighter border */
+      --card-bg: #ffffff;
+      --code-bg: #ecf0f1; /* Light grey for code */
+      --header-bg: #34495e; /* Dark header */
+      --shadow: 0 2px 8px rgba(0, 0, 0, 0.05); /* Lighter shadow */
+      --transition: all 0.2s ease;
+    }
+
+    /* Dark mode specific styles, overriding light mode variables */
+    .dark-mode {
+      --primary: #6cb6ff;
+      --secondary: #569cd6;
+      --accent: #ff7b7b;
+      --light: #1e1e1e; /* Dark background */
+      --dark: #e0e0e0; /* Light text */
+      --card-bg: #252526;
+      --code-bg: #333333;
+      --border: #444444;
+      --header-bg: #2d2d30;
+      --shadow: 0 2px 8px rgba(0, 0, 0, 0.2);
+    }
+
+    /* Universal box-sizing and transition for all elements */
+    * {
+      margin: 0;
+      padding: 0;
+      box-sizing: border-box;
+      transition: var(--transition);
+    }
+
+    /* Body styling for font, background, text color, and layout */
+    body {
+      font-family: 'Inter', 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif; /* Changed font to Inter */
+      background-color: var(--light);
+      color: var(--dark);
+      line-height: 1.6;
+      padding: 20px;
+      max-width: 1200px; /* Slightly narrower content area */
+      margin: 0 auto; /* Center the content */
+    }
+
+    /* Main container for simplified layout */
+    .container {
+      display: block; /* No grid needed, single column */
+      width: 100%;
+    }
+
+    /* Header styling - simplified */
+    header {
+      background: var(--header-bg); /* Solid color, less gradient */
+      color: white;
+      padding: 15px 25px; /* Reduced padding */
+      border-radius: 8px; /* Slightly less rounded */
+      margin-bottom: 25px; /* Reduced margin */
+      box-shadow: var(--shadow);
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+    }
+
+    /* Header content alignment */
+    .header-content {
+      display: flex;
+      align-items: center;
+      gap: 15px; /* Reduced gap */
+    }
+
+    /* Main heading style */
+    h1 {
+      font-size: 2rem; /* Slightly smaller heading */
+      font-weight: 600;
+      margin: 0;
+    }
+
+    /* Tagline text style */
+    .tagline {
+      font-size: 1rem; /* Slightly smaller tagline */
+      opacity: 0.9;
+      margin-top: 5px;
+    }
+
+    /* Logo icon style */
+    .logo {
+      font-size: 2.5rem; /* Slightly smaller logo */
+      color: white;
+    }
+
+    /* Theme toggle button styling - simplified to icon */
+    .theme-toggle {
+      background: none; /* No background */
+      border: 1px solid rgba(255, 255, 255, 0.3); /* Subtle border */
+      color: white;
+      padding: 8px 12px; /* Smaller padding */
+      border-radius: 50%; /* Circular button */
+      cursor: pointer;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-size: 1.2rem; /* Icon size */
+      transition: all 0.3s;
+    }
+
+    /* Theme toggle button hover effect */
+    .theme-toggle:hover {
+      background: rgba(255, 255, 255, 0.1);
+      transform: scale(1.05);
+    }
+
+    /* Main content area grid layout for method cards */
+    .content {
+      display: grid;
+      grid-template-columns: repeat(auto-fill, minmax(300px, 1fr)); /* Even more compact cards */
+      gap: 15px; /* Reduced gap between cards */
+      margin-bottom: 40px;
+    }
+
+    /* Category sections are always active in this simplified layout */
+    .category-section {
+      display: block;
+      grid-column: 1 / -1; /* Span full width */
+      margin-bottom: 30px; /* Space between sections */
+    }
+
+    /* Section header styling */
+    .section-header {
+      display: flex;
+      align-items: center;
+      gap: 12px;
+      margin-bottom: 20px; /* Reduced margin */
+      padding-bottom: 10px; /* Reduced padding */
+      border-bottom: 1px solid var(--border); /* Lighter border */
+    }
+
+    /* Section icon style */
+    .section-icon {
+      font-size: 1.5rem; /* Slightly smaller icon */
+      color: var(--primary);
+    }
+
+    /* Section title style */
+    .section-title {
+      font-size: 1.6rem; /* Slightly smaller title */
+      color: var(--primary);
+    }
+
+    /* Method card styling - simplified */
+    .method-card {
+      background: var(--card-bg);
+      border-radius: 8px; /* Less rounded */
+      box-shadow: var(--shadow);
+      overflow: hidden;
+      transition: transform 0.2s;
+      height: 100%;
+      display: flex;
+      flex-direction: column;
+      border: 1px solid var(--border); /* Added subtle border */
+    }
+
+    /* Method card hover effect */
+    .method-card:hover {
+      transform: translateY(-3px); /* Less dramatic hover */
+      box-shadow: 0 4px 10px rgba(0, 0, 0, 0.08);
+    }
+
+    /* Card header styling - simplified */
+    .card-header {
+      background: none; /* No background color */
+      padding: 12px 15px; /* Reduced padding */
+      border-bottom: 1px dashed var(--border); /* Dashed border for lighter look */
+    }
+
+    /* Method name style (code font) */
+    .method-name {
+      font-family: 'Consolas', 'Courier New', monospace;
+      font-size: 1rem; /* Standard font size */
+      font-weight: 600; /* Slightly lighter font weight */
+      color: var(--dark); /* Darker color for readability */
+      margin-bottom: 3px;
+    }
+
+    /* Method arguments style */
+    .method-args {
+      font-size: 0.85rem; /* Slightly smaller */
+      color: var(--secondary);
+    }
+
+    /* Card body styling */
+    .card-body {
+      padding: 15px;
+      flex-grow: 1;
+    }
+
+    /* Method description style */
+    .method-desc {
+      color: var(--dark);
+      margin-bottom: 10px;
+      line-height: 1.5;
+      font-size: 0.9rem; /* Slightly smaller */
+    }
+
+    /* Card footer styling */
+    .card-footer {
+      padding: 0 15px 15px;
+    }
+
+    /* Example button styling */
+    .example-btn {
+      background: var(--primary);
+      color: white;
+      border: none;
+      padding: 8px 15px; /* Reduced padding */
+      border-radius: 6px; /* Slightly less rounded */
+      cursor: pointer;
+      display: flex;
+      align-items: center;
+      gap: 6px;
+      font-weight: 500; /* Lighter font weight */
+      width: 100%;
+      justify-content: center;
+      transition: background 0.2s;
+    }
+
+    /* Example button hover effect */
+    .example-btn:hover {
+      background: var(--secondary);
+    }
+
+    /* Example code block styling */
+    .example-code {
+      background: var(--code-bg);
+      border-radius: 6px; /* Less rounded */
+      padding: 15px; /* Reduced padding */
+      font-family: 'Consolas', 'Courier New', monospace;
+      font-size: 0.85rem; /* Smaller font size for code */
+      line-height: 1.5;
+      white-space: pre-wrap;
+      margin-top: 10px; /* Reduced margin */
+      display: none;
+      border-left: 3px solid var(--accent); /* Thinner border */
+      overflow-x: auto; /* Allow horizontal scrolling for long lines */
+    }
+
+    /* Show example code when active */
+    .example-code.active {
+      display: block;
+    }
+
+    /* Footer styling */
+    .footer {
+      text-align: center;
+      padding: 20px; /* Reduced padding */
+      margin-top: 25px; /* Reduced margin */
+      border-top: 1px solid var(--border);
+      color: var(--secondary);
+    }
+
+    /* Footer paragraph spacing */
+    .footer p {
+      margin: 3px 0; /* Reduced margin */
+      font-size: 0.9rem;
+    }
+
+    /* Highlighted text style */
+    .highlight {
+      background: rgba(255, 215, 0, 0.1); /* Lighter highlight */
+      padding: 2px 4px;
+      border-radius: 4px;
+      font-weight: 600;
+    }
+
+    /* Responsive adjustments for smaller screens (tablet) */
+    @media (max-width: 900px) {
+      body {
+        padding: 15px;
+      }
+      header {
+        flex-direction: column;
+        text-align: center;
+        gap: 10px;
+        padding: 15px;
+      }
+      .header-content {
+        flex-direction: column;
+        gap: 10px;
+      }
+      .theme-toggle {
+        margin-top: 10px;
+      }
+      .content {
+        grid-template-columns: repeat(auto-fill, minmax(280px, 1fr)); /* Adjust for smaller screens */
+        gap: 15px;
+      }
+      .section-header {
+        flex-direction: column;
+        align-items: flex-start;
+        text-align: left;
+        gap: 8px;
+      }
+      .section-icon {
+        font-size: 1.3rem;
+      }
+      .section-title {
+        font-size: 1.4rem;
+      }
+    }
+
+    /* Responsive adjustments for very small screens (mobile) */
+    @media (max-width: 600px) {
+      body {
+        padding: 10px;
+      }
+      .content {
+        grid-template-columns: 1fr; /* Single column for content */
+        gap: 10px;
+      }
+      .method-card {
+        padding: 10px;
+      }
+      .card-header, .card-body, .card-footer {
+        padding: 10px;
+      }
+      .method-name {
+        font-size: 0.95rem;
+      }
+      .method-desc {
+        font-size: 0.85rem;
+      }
+      .example-code {
+        font-size: 0.8rem;
+      }
+    }
+  </style>
+</head>
+<body>
+  <header>
+    <div class="header-content">
+      <div class="logo">
+        <i class="fas fa-code"></i>
+      </div>
+      <div>
+        <h1>Java String Methods Cheat Sheet</h1>
+        <p class="tagline">Essential methods for String manipulation in Java</p>
+      </div>
+    </div>
+    <button class="theme-toggle" id="themeBtn" aria-label="Toggle dark mode">
+      <i class="fas fa-moon"></i>
+    </button>
+  </header>
+
+  <div class="container">
+    <!-- Removed sidebar for simpler UI -->
+
+    <main class="content">
+      <!-- Basic Information Section -->
+      <section class="category-section" id="basic-info-section">
+        <div class="section-header">
+          <div class="section-icon">
+            <i class="fas fa-info-circle"></i>
+          </div>
+          <h2 class="section-title">Basic Information Methods</h2>
+        </div>
+        
+        <div class="method-grid">
+          <div class="method-card">
+            <div class="card-header">
+              <div class="method-name">length()</div>
+              <div class="method-args">Arguments: 0</div>
+            </div>
+            <div class="card-body">
+              <p class="method-desc">Returns the length of the string.</p>
+            </div>
+            <div class="card-footer">
+              <button class="example-btn">
+                <i class="fas fa-code"></i> Show Example
+              </button>
+              <pre class="example-code">String s = "hello";
+int len = s.length();
+System.out.println(len); 
+// Output: 5</pre>
+            </div>
+          </div>
+          
+          <div class="method-card">
+            <div class="card-header">
+              <div class="method-name">isEmpty()</div>
+              <div class="method-args">Arguments: 0</div>
+            </div>
+            <div class="card-body">
+              <p class="method-desc">Checks if the string is empty (length is 0).</p>
+            </div>
+            <div class="card-footer">
+              <button class="example-btn">
+                <i class="fas fa-code"></i> Show Example
+              </button>
+              <pre class="example-code">String s1 = "";
+String s2 = "abc";
+System.out.println(s1.isEmpty()); 
+// Output: true
+System.out.println(s2.isEmpty()); 
+// Output: false</pre>
+            </div>
+          </div>
+          
+          <div class="method-card">
+            <div class="card-header">
+              <div class="method-name">isBlank()</div>
+              <div class="method-args">Arguments: 0</div>
+            </div>
+            <div class="card-body">
+              <p class="method-desc">Checks if the string is empty or contains only whitespace characters (Java 11+).</p>
+            </div>
+            <div class="card-footer">
+              <button class="example-btn">
+                <i class="fas fa-code"></i> Show Example
+              </button>
+              <pre class="example-code">String s1 = "   ";
+String s2 = "abc";
+System.out.println(s1.isBlank()); 
+// Output: true
+System.out.println(s2.isBlank()); 
+// Output: false</pre>
+            </div>
+          </div>
+        </div>
+      </section>
+
+      <!-- Character and Code Point Access Section -->
+      <section class="category-section" id="char-code-access-section">
+        <div class="section-header">
+          <div class="section-icon">
+            <i class="fas fa-font"></i>
+          </div>
+          <h2 class="section-title">Character & Code Point Access Methods</h2>
+        </div>
+        
+        <div class="method-grid">
+          <div class="method-card">
+            <div class="card-header">
+              <div class="method-name">charAt(int index)</div>
+              <div class="method-args">Arguments: 1</div>
+            </div>
+            <div class="card-body">
+              <p class="method-desc">Returns the character at the specified index.</p>
+            </div>
+            <div class="card-footer">
+              <button class="example-btn">
+                <i class="fas fa-code"></i> Show Example
+              </button>
+              <pre class="example-code">String s = "Java";
+char c = s.charAt(2);
+System.out.println(c); 
+// Output: v</pre>
+            </div>
+          </div>
+          
+          <div class="method-card">
+            <div class="card-header">
+              <div class="method-name">codePointAt(int index)</div>
+              <div class="method-args">Arguments: 1</div>
+            </div>
+            <div class="card-body">
+              <p class="method-desc">Returns the Unicode code point at the specified index.</p>
+            </div>
+            <div class="card-footer">
+              <button class="example-btn">
+                <i class="fas fa-code"></i> Show Example
+              </button>
+              <pre class="example-code">String s = "Hello\uD83D\uDE00World"; // Contains a smiley emoji (surrogate pair)
+int codePoint = s.codePointAt(5); // Index of the start of the emoji
+System.out.println(codePoint); 
+// Output: 128512</pre>
+            </div>
+          </div>
+
+          <div class="method-card">
+            <div class="card-header">
+              <div class="method-name">codePointBefore(int index)</div>
+              <div class="method-args">Arguments: 1</div>
+            </div>
+            <div class="card-body">
+              <p class="method-desc">Returns the Unicode code point before the specified index.</p>
+            </div>
+            <div class="card-footer">
+              <button class="example-btn">
+                <i class="fas fa-code"></i> Show Example
+              </button>
+              <pre class="example-code">String s = "Hello\uD83D\uDE00World";
+int codePoint = s.codePointBefore(7); // Index after the emoji (surrogate pair ends at 6)
+System.out.println(codePoint); 
+// Output: 128512</pre>
+            </div>
+          </div>
+
+          <div class="method-card">
+            <div class="card-header">
+              <div class="method-name">codePointCount(int beginIndex, int endIndex)</div>
+              <div class="method-args">Arguments: 2</div>
+            </div>
+            <div class="card-body">
+              <p class="method-desc">Returns the number of Unicode code points in the specified text range.</p>
+            </div>
+            <div class="card-footer">
+              <button class="example-btn">
+                <i class="fas fa-code"></i> Show Example
+              </button>
+              <pre class="example-code">String s = "Hello\uD83D\uDE00World";
+int count = s.codePointCount(0, s.length());
+System.out.println(count); 
+// Output: 11 (10 chars + 1 emoji)</pre>
+            </div>
+          </div>
+
+          <div class="method-card">
+            <div class="card-header">
+              <div class="method-name">offsetByCodePoints(int index, int codePointOffset)</div>
+              <div class="method-args">Arguments: 2</div>
+            </div>
+            <div class="card-body">
+              <p class="method-desc">Returns the index within this string that is offset by `codePointOffset` code points starting from `index`.</p>
+            </div>
+            <div class="card-footer">
+              <button class="example-btn">
+                <i class="fas fa-code"></i> Show Example
+              </button>
+              <pre class="example-code">String s = "Hello\uD83D\uDE00World";
+int newIndex = s.offsetByCodePoints(0, 6); // Offset by 6 code points from index 0
+System.out.println(newIndex); 
+// Output: 7 (after 'o' and the 2-char emoji)</pre>
+            </div>
+          </div>
+        </div>
+      </section>
+
+      <!-- Comparison Section -->
+      <section class="category-section" id="comparison-section">
+        <div class="section-header">
+          <div class="section-icon">
+            <i class="fas fa-balance-scale"></i>
+          </div>
+          <h2 class="section-title">Comparison Methods</h2>
+        </div>
+        
+        <div class="method-grid">
+          <div class="method-card">
+            <div class="card-header">
+              <div class="method-name">equals(Object anObject)</div>
+              <div class="method-args">Arguments: 1</div>
+            </div>
+            <div class="card-body">
+              <p class="method-desc">Checks if this string is equal to the specified object. Returns true if they are equal.</p>
+            </div>
+            <div class="card-footer">
+              <button class="example-btn">
+                <i class="fas fa-code"></i> Show Example
+              </button>
+              <pre class="example-code">String s1 = "hello";
+String s2 = "hello";
+String s3 = "world";
+System.out.println(s1.equals(s2)); 
+// Output: true
+System.out.println(s1.equals(s3)); 
+// Output: false</pre>
+            </div>
+          </div>
+          
+          <div class="method-card">
+            <div class="card-header">
+              <div class="method-name">equalsIgnoreCase(String anotherString)</div>
+              <div class="method-args">Arguments: 1</div>
+            </div>
+            <div class="card-body">
+              <p class="method-desc">Compares this String to another String, ignoring case considerations.</p>
+            </div>
+            <div class="card-footer">
+              <button class="example-btn">
+                <i class="fas fa-code"></i> Show Example
+              </button>
+              <pre class="example-code">String s1 = "Hello";
+String s2 = "hello";
+System.out.println(s1.equalsIgnoreCase(s2)); 
+// Output: true</pre>
+            </div>
+          </div>
+          
+          <div class="method-card">
+            <div class="card-header">
+              <div class="method-name">compareTo(String anotherString)</div>
+              <div class="method-args">Arguments: 1</div>
+            </div>
+            <div class="card-body">
+              <p class="method-desc">Compares two strings lexicographically. Returns a negative integer, zero, or a positive integer as this object is less than, equal to, or greater than the specified object.</p>
+            </div>
+            <div class="card-footer">
+              <button class="example-btn">
+                <i class="fas fa-code"></i> Show Example
+              </button>
+              <pre class="example-code">String s1 = "apple";
+String s2 = "banana";
+String s3 = "apple";
+System.out.println(s1.compareTo(s2)); 
+// Output: (negative value)
+System.out.println(s1.compareTo(s3)); 
+// Output: 0</pre>
+            </div>
+          </div>
+
+          <div class="method-card">
+            <div class="card-header">
+              <div class="method-name">compareToIgnoreCase(String str)</div>
+              <div class="method-args">Arguments: 1</div>
+            </div>
+            <div class="card-body">
+              <p class="method-desc">Compares two strings lexicographically, ignoring case differences.</p>
+            </div>
+            <div class="card-footer">
+              <button class="example-btn">
+                <i class="fas fa-code"></i> Show Example
+              </button>
+              <pre class="example-code">String s1 = "Apple";
+String s2 = "apple";
+System.out.println(s1.compareToIgnoreCase(s2)); 
+// Output: 0</pre>
+            </div>
+          </div>
+
+          <div class="method-card">
+            <div class="card-header">
+              <div class="method-name">contentEquals(CharSequence cs)</div>
+              <div class="method-args">Arguments: 1</div>
+            </div>
+            <div class="card-body">
+              <p class="method-desc">Compares this string to the specified CharSequence. Returns true if they represent the same sequence of characters.</p>
+            </div>
+            <div class="card-footer">
+              <button class="example-btn">
+                <i class="fas fa-code"></i> Show Example
+              </button>
+              <pre class="example-code">String s = "test";
+StringBuilder sb = new StringBuilder("test");
+System.out.println(s.contentEquals(sb)); 
+// Output: true</pre>
+            </div>
+          </div>
+
+          <div class="method-card">
+            <div class="card-header">
+              <div class="method-name">contentEquals(StringBuffer sb)</div>
+              <div class="method-args">Arguments: 1</div>
+            </div>
+            <div class="card-body">
+              <p class="method-desc">Compares this string to the specified StringBuffer. Returns true if they represent the same sequence of characters.</p>
+            </div>
+            <div class="card-footer">
+              <button class="example-btn">
+                <i class="fas fa-code"></i> Show Example
+              </button>
+              <pre class="example-code">String s = "example";
+StringBuffer sb = new StringBuffer("example");
+System.out.println(s.contentEquals(sb)); 
+// Output: true</pre>
+            </div>
+          </div>
+
+          <div class="method-card">
+            <div class="card-header">
+              <div class="method-name">regionMatches(int toffset, String other, int ooffset, int len)</div>
+              <div class="method-args">Arguments: 4</div>
+            </div>
+            <div class="card-body">
+              <p class="method-desc">Tests if a region of this string matches a region of another string.</p>
+            </div>
+            <div class="card-footer">
+              <button class="example-btn">
+                <i class="fas fa-code"></i> Show Example
+              </button>
+              <pre class="example-code">String s1 = "HelloWorld";
+String s2 = "loWo";
+boolean match = s1.regionMatches(3, s2, 0, 4); // Compare "loWo" from s1 (index 3) with s2
+System.out.println(match); 
+// Output: true</pre>
+            </div>
+          </div>
+
+          <div class="method-card">
+            <div class="card-header">
+              <div class="method-name">regionMatches(boolean ignoreCase, int toffset, String other, int ooffset, int len)</div>
+              <div class="method-args">Arguments: 5</div>
+            </div>
+            <div class="card-body">
+              <p class="method-desc">Same as above but can ignore case.</p>
+            </div>
+            <div class="card-footer">
+              <button class="example-btn">
+                <i class="fas fa-code"></i> Show Example
+              </button>
+              <pre class="example-code">String s1 = "HelloWorld";
+String s2 = "world";
+boolean match = s1.regionMatches(true, 5, s2, 0, 5); // ignore case, start s1 at index 5, start s2 at 0, compare 5 chars
+System.out.println(match); 
+// Output: true</pre>
+            </div>
+          </div>
+        </div>
+      </section>
+
+      <!-- Search and Indexing Section -->
+      <section class="category-section" id="search-indexing-section">
+        <div class="section-header">
+          <div class="section-icon">
+            <i class="fas fa-search"></i>
+          </div>
+          <h2 class="section-title">Search & Indexing Methods</h2>
+        </div>
+        
+        <div class="method-grid">
+          <div class="method-card">
+            <div class="card-header">
+              <div class="method-name">indexOf(int ch)</div>
+              <div class="method-args">Arguments: 1</div>
+            </div>
+            <div class="card-body">
+              <p class="method-desc">Returns the index of the first occurrence of the specified character.</p>
+            </div>
+            <div class="card-footer">
+              <button class="example-btn">
+                <i class="fas fa-code"></i> Show Example
+              </button>
+              <pre class="example-code">String s = "banana";
+int index = s.indexOf('a');
+System.out.println(index); 
+// Output: 1</pre>
+            </div>
+          </div>
+
+          <div class="method-card">
+            <div class="card-header">
+              <div class="method-name">indexOf(int ch, int fromIndex)</div>
+              <div class="method-args">Arguments: 2</div>
+            </div>
+            <div class="card-body">
+              <p class="method-desc">Returns the index of the first occurrence of the specified character, starting the search at the specified index.</p>
+            </div>
+            <div class="card-footer">
+              <button class="example-btn">
+                <i class="fas fa-code"></i> Show Example
+              </button>
+              <pre class="example-code">String s = "banana";
+int index = s.indexOf('a', 2); // Search 'a' from index 2
+System.out.println(index); 
+// Output: 3</pre>
+            </div>
+          </div>
+
+          <div class="method-card">
+            <div class="card-header">
+              <div class="method-name">indexOf(String str)</div>
+              <div class="method-args">Arguments: 1</div>
+            </div>
+            <div class="card-body">
+              <p class="method-desc">Returns the index of the first occurrence of the specified substring.</p>
+            </div>
+            <div class="card-footer">
+              <button class="example-btn">
+                <i class="fas fa-code"></i> Show Example
+              </button>
+              <pre class="example-code">String s = "hello world";
+int index = s.indexOf("world");
+System.out.println(index); 
+// Output: 6</pre>
+            </div>
+          </div>
+
+          <div class="method-card">
+            <div class="card-header">
+              <div class="method-name">indexOf(String str, int fromIndex)</div>
+              <div class="method-args">Arguments: 2</div>
+            </div>
+            <div class="card-body">
+              <p class="method-desc">Returns the index of the first occurrence of the specified substring, starting the search at the specified index.</p>
+            </div>
+            <div class="card-footer">
+              <button class="example-btn">
+                <i class="fas fa-code"></i> Show Example
+              </button>
+              <pre class="example-code">String s = "hello world hello";
+int index = s.indexOf("hello", 1); // Start search from index 1
+System.out.println(index); 
+// Output: 12</pre>
+            </div>
+          </div>
+
+          <div class="method-card">
+            <div class="card-header">
+              <div class="method-name">lastIndexOf(int ch)</div>
+              <div class="method-args">Arguments: 1</div>
+            </div>
+            <div class="card-body">
+              <p class="method-desc">Returns the index of the last occurrence of the character.</p>
+            </div>
+            <div class="card-footer">
+              <button class="example-btn">
+                <i class="fas fa-code"></i> Show Example
+              </button>
+              <pre class="example-code">String s = "banana";
+int index = s.lastIndexOf('a');
+System.out.println(index); 
+// Output: 3</pre>
+            </div>
+          </div>
+
+          <div class="method-card">
+            <div class="card-header">
+              <div class="method-name">lastIndexOf(int ch, int fromIndex)</div>
+              <div class="method-args">Arguments: 2</div>
+            </div>
+            <div class="card-body">
+              <p class="method-desc">Searches backward for the last occurrence of the character, starting from a given index.</p>
+            </div>
+            <div class="card-footer">
+              <button class="example-btn">
+                <i class="fas fa-code"></i> Show Example
+              </button>
+              <pre class="example-code">String s = "banana";
+int index = s.lastIndexOf('a', 2); // Search 'a' backward from index 2
+System.out.println(index); 
+// Output: 1</pre>
+            </div>
+          </div>
+
+          <div class="method-card">
+            <div class="card-header">
+              <div class="method-name">lastIndexOf(String str)</div>
+              <div class="method-args">Arguments: 1</div>
+            </div>
+            <div class="card-body">
+              <p class="method-desc">Returns the last index of the specified substring.</p>
+            </div>
+            <div class="card-footer">
+              <button class="example-btn">
+                <i class="fas fa-code"></i> Show Example
+              </button>
+              <pre class="example-code">String s = "hello world hello";
+int index = s.lastIndexOf("hello");
+System.out.println(index); 
+// Output: 12</pre>
+            </div>
+          </div>
+
+          <div class="method-card">
+            <div class="card-header">
+              <div class="method-name">lastIndexOf(String str, int fromIndex)</div>
+              <div class="method-args">Arguments: 2</div>
+            </div>
+            <div class="card-body">
+              <p class="method-desc">Searches backward for the last occurrence of the substring, starting from a given index.</p>
+            </div>
+            <div class="card-footer">
+              <button class="example-btn">
+                <i class="fas fa-code"></i> Show Example
+              </button>
+              <pre class="example-code">String s = "ababa";
+int index = s.lastIndexOf("aba", 2); // Search "aba" backward from index 2
+System.out.println(index); 
+// Output: 0</pre>
+            </div>
+          </div>
+
+          <div class="method-card">
+            <div class="card-header">
+              <div class="method-name">contains(CharSequence s)</div>
+              <div class="method-args">Arguments: 1</div>
+            </div>
+            <div class="card-body">
+              <p class="method-desc">Returns true if and only if this string contains the specified sequence of character values.</p>
+            </div>
+            <div class="card-footer">
+              <button class="example-btn">
+                <i class="fas fa-code"></i> Show Example
+              </button>
+              <pre class="example-code">String s = "programming";
+System.out.println(s.contains("gram")); 
+// Output: true</pre>
+            </div>
+          </div>
+
+          <div class="method-card">
+            <div class="card-header">
+              <div class="method-name">matches(String regex)</div>
+              <div class="method-args">Arguments: 1</div>
+            </div>
+            <div class="card-body">
+              <p class="method-desc">Tells whether or not this string matches the given regular expression.</p>
+            </div>
+            <div class="card-footer">
+              <button class="example-btn">
+                <i class="fas fa-code"></i> Show Example
+              </button>
+              <pre class="example-code">String s = "Java123";
+System.out.println(s.matches("[a-zA-Z]+[0-9]+")); 
+// Output: true</pre>
+            </div>
+          </div>
+        </div>
+      </section>
+      
+      <!-- Substrings and Manipulation Section -->
+      <section class="category-section" id="substrings-manipulation-section">
+        <div class="section-header">
+          <div class="section-icon">
+            <i class="fas fa-cut"></i>
+          </div>
+          <h2 class="section-title">Substrings & Manipulation Methods</h2>
+        </div>
+        
+        <div class="method-grid">
+          <div class="method-card">
+            <div class="card-header">
+              <div class="method-name">substring(int beginIndex)</div>
+              <div class="method-args">Arguments: 1</div>
+            </div>
+            <div class="card-body">
+              <p class="method-desc">Returns a new string that is a substring starting from the specified index to the end.</p>
+            </div>
+            <div class="card-footer">
+              <button class="example-btn">
+                <i class="fas fa-code"></i> Show Example
+              </button>
+              <pre class="example-code">String s = "Java Programming";
+String sub = s.substring(5);
+System.out.println(sub); 
+// Output: Programming</pre>
+            </div>
+          </div>
+
+          <div class="method-card">
+            <div class="card-header">
+              <div class="method-name">substring(int beginIndex, int endIndex)</div>
+              <div class="method-args">Arguments: 2</div>
+            </div>
+            <div class="card-body">
+              <p class="method-desc">Returns a new string that is a substring from beginIndex to endIndex - 1.</p>
+            </div>
+            <div class="card-footer">
+              <button class="example-btn">
+                <i class="fas fa-code"></i> Show Example
+              </button>
+              <pre class="example-code">String s = "Hello World";
+String sub = s.substring(0, 5);
+System.out.println(sub); 
+// Output: Hello</pre>
+            </div>
+          </div>
+
+          <div class="method-card">
+            <div class="card-header">
+              <div class="method-name">subSequence(int beginIndex, int endIndex)</div>
+              <div class="method-args">Arguments: 2</div>
+            </div>
+            <div class="card-body">
+              <p class="method-desc">Returns a new character sequence that is a subsequence of this string.</p>
+            </div>
+            <div class="card-footer">
+              <button class="example-btn">
+                <i class="fas fa-code"></i> Show Example
+              </button>
+              <pre class="example-code">String s = "Hello World";
+CharSequence subSeq = s.subSequence(0, 5);
+System.out.println(subSeq); 
+// Output: Hello</pre>
+            </div>
+          </div>
+          
+          <div class="method-card">
+            <div class="card-header">
+              <div class="method-name">replace(char oldChar, char newChar)</div>
+              <div class="method-args">Arguments: 2</div>
+            </div>
+            <div class="card-body">
+              <p class="method-desc">Returns a new string resulting from replacing all occurrences of oldChar in this string with newChar.</p>
+            </div>
+            <div class="card-footer">
+              <button class="example-btn">
+                <i class="fas fa-code"></i> Show Example
+              </button>
+              <pre class="example-code">String s = "banana";
+String newS = s.replace('a', 'o');
+System.out.println(newS); 
+// Output: bonono</pre>
+            </div>
+          </div>
+
+          <div class="method-card">
+            <div class="card-header">
+              <div class="method-name">replace(CharSequence target, CharSequence replacement)</div>
+              <div class="method-args">Arguments: 2</div>
+            </div>
+            <div class="card-body">
+              <p class="method-desc">Replaces each substring of this string that matches the literal target sequence with the specified literal replacement sequence.</p>
+            </div>
+            <div class="card-footer">
+              <button class="example-btn">
+                <i class="fas fa-code"></i> Show Example
+              </button>
+              <pre class="example-code">String s = "hello world";
+String newS = s.replace("world", "Java");
+System.out.println(newS); 
+// Output: hello Java</pre>
+            </div>
+          </div>
+
+          <div class="method-card">
+            <div class="card-header">
+              <div class="method-name">replaceAll(String regex, String replacement)</div>
+              <div class="method-args">Arguments: 2</div>
+            </div>
+            <div class="card-body">
+              <p class="method-desc">Replaces all substrings that match the regex with a replacement string.</p>
+            </div>
+            <div class="card-footer">
+              <button class="example-btn">
+                <i class="fas fa-code"></i> Show Example
+              </button>
+              <pre class="example-code">String s = "one two one";
+String newS = s.replaceAll("one", "three");
+System.out.println(newS); 
+// Output: three two three</pre>
+            </div>
+          </div>
+
+          <div class="method-card">
+            <div class="card-header">
+              <div class="method-name">replaceFirst(String regex, String replacement)</div>
+              <div class="method-args">Arguments: 2</div>
+            </div>
+            <div class="card-body">
+              <p class="method-desc">Replaces the first substring matching the regex.</p>
+            </div>
+            <div class="card-footer">
+              <button class="example-btn">
+                <i class="fas fa-code"></i> Show Example
+              </button>
+              <pre class="example-code">String s = "one two one";
+String newS = s.replaceFirst("one", "three");
+System.out.println(newS); 
+// Output: three two one</pre>
+            </div>
+          </div>
+
+          <div class="method-card">
+            <div class="card-header">
+              <div class="method-name">concat(String str)</div>
+              <div class="method-args">Arguments: 1</div>
+            </div>
+            <div class="card-body">
+              <p class="method-desc">Concatenates the specified string to the end of this string.</p>
+            </div>
+            <div class="card-footer">
+              <button class="example-btn">
+                <i class="fas fa-code"></i> Show Example
+              </button>
+              <pre class="example-code">String s1 = "Hello";
+String s2 = " World";
+String result = s1.concat(s2);
+System.out.println(result); 
+// Output: Hello World</pre>
+            </div>
+          </div>
+
+          <div class="method-card">
+            <div class="card-header">
+              <div class="method-name">split(String regex)</div>
+              <div class="method-args">Arguments: 1</div>
+            </div>
+            <div class="card-body">
+              <p class="method-desc">Splits this string around matches of the given regular expression.</p>
+            </div>
+            <div class="card-footer">
+              <button class="example-btn">
+                <i class="fas fa-code"></i> Show Example
+              </button>
+              <pre class="example-code">import java.util.Arrays; // Needed for Arrays.toString()
+String s = "apple,banana,orange";
+String[] fruits = s.split(",");
+System.out.println(Arrays.toString(fruits)); 
+// Output: [apple, banana, orange]</pre>
+            </div>
+          </div>
+          
+          <div class="method-card">
+            <div class="card-header">
+              <div class="method-name">split(String regex, int limit)</div>
+              <div class="method-args">Arguments: 2</div>
+            </div>
+            <div class="card-body">
+              <p class="method-desc">Splits this string around matches of the given regular expression with a limit on the number of times the pattern is applied.</p>
+            </div>
+            <div class="card-footer">
+              <button class="example-btn">
+                <i class="fas fa-code"></i> Show Example
+              </button>
+              <pre class="example-code">import java.util.Arrays; // Needed for Arrays.toString()
+String s = "a.b.c.d";
+String[] parts = s.split("\\.", 2); // Split only once
+System.out.println(Arrays.toString(parts)); 
+// Output: [a, b.c.d]</pre>
+            </div>
+          </div>
+        </div>
+      </section>
+
+      <!-- Case and Whitespace Section -->
+      <section class="category-section" id="case-whitespace-section">
+        <div class="section-header">
+          <div class="section-icon">
+            <i class="fas fa-text-height"></i>
+          </div>
+          <h2 class="section-title">Case & Whitespace Methods</h2>
+        </div>
+        
+        <div class="method-grid">
+          <div class="method-card">
+            <div class="card-header">
+              <div class="method-name">toLowerCase()</div>
+              <div class="method-args">Arguments: 0</div>
+            </div>
+            <div class="card-body">
+              <p class="method-desc">Converts all of the characters in this String to lower case using the default locale.</p>
+            </div>
+            <div class="card-footer">
+              <button class="example-btn">
+                <i class="fas fa-code"></i> Show Example
+              </button>
+              <pre class="example-code">String s = "HELLO";
+String lower = s.toLowerCase();
+System.out.println(lower); 
+// Output: hello</pre>
+            </div>
+          </div>
+
+          <div class="method-card">
+            <div class="card-header">
+              <div class="method-name">toLowerCase(Locale locale)</div>
+              <div class="method-args">Arguments: 1</div>
+            </div>
+            <div class="card-body">
+              <p class="method-desc">Converts all of the characters in this String to lower case using the specified locale.</p>
+            </div>
+            <div class="card-footer">
+              <button class="example-btn">
+                <i class="fas fa-code"></i> Show Example
+              </button>
+              <pre class="example-code">import java.util.Locale;
+String s = "HELLO";
+String lowerTurkish = s.toLowerCase(new Locale("tr", "TR")); // Turkish 'I' to lowercase 'ı'
+System.out.println(lowerTurkish); 
+// Output: helo</pre>
+            </div>
+          </div>
+
+          <div class="method-card">
+            <div class="card-header">
+              <div class="method-name">toUpperCase()</div>
+              <div class="method-args">Arguments: 0</div>
+            </div>
+            <div class="card-body">
+              <p class="method-desc">Converts all of the characters in this String to upper case using the default locale.</p>
+            </div>
+            <div class="card-footer">
+              <button class="example-btn">
+                <i class="fas fa-code"></i> Show Example
+              </button>
+              <pre class="example-code">String s = "hello";
+String upper = s.toUpperCase();
+System.out.println(upper); 
+// Output: HELLO</pre>
+            </div>
+          </div>
+
+          <div class="method-card">
+            <div class="card-header">
+              <div class="method-name">toUpperCase(Locale locale)</div>
+              <div class="method-args">Arguments: 1</div>
+            </div>
+            <div class="card-body">
+              <p class="method-desc">Converts all of the characters in this String to upper case using the specified locale.</p>
+            </div>
+            <div class="card-footer">
+              <button class="example-btn">
+                <i class="fas fa-code"></i> Show Example
+              </button>
+              <pre class="example-code">import java.util.Locale;
+String s = "istanbul";
+String upperTurkish = s.toUpperCase(new Locale("tr", "TR")); // Turkish 'i' to uppercase 'İ'
+System.out.println(upperTurkish); 
+// Output: İSTANBUL</pre>
+            </div>
+          </div>
+
+          <div class="method-card">
+            <div class="card-header">
+              <div class="method-name">trim()</div>
+              <div class="method-args">Arguments: 0</div>
+            </div>
+            <div class="card-body">
+              <p class="method-desc">Returns a copy of the string, with leading and trailing ASCII whitespace omitted.</p>
+            </div>
+            <div class="card-footer">
+              <button class="example-btn">
+                <i class="fas fa-code"></i> Show Example
+              </button>
+              <pre class="example-code">String s = "  Hello World  ";
+String trimmed = s.trim();
+System.out.println(trimmed); 
+// Output: Hello World</pre>
+            </div>
+          </div>
+
+          <div class="method-card">
+            <div class="card-header">
+              <div class="method-name">strip()</div>
+              <div class="method-args">Arguments: 0</div>
+            </div>
+            <div class="card-body">
+              <p class="method-desc">Returns a string whose value is this string, with all leading and trailing whitespace removed (Java 11+). Handles Unicode whitespace.</p>
+            </div>
+            <div class="card-footer">
+              <button class="example-btn">
+                <i class="fas fa-code"></i> Show Example
+              </button>
+              <pre class="example-code">String s = "  \t Hello World \n ";
+String stripped = s.strip();
+System.out.println(stripped); 
+// Output: Hello World</pre>
+            </div>
+          </div>
+
+          <div class="method-card">
+            <div class="card-header">
+              <div class="method-name">stripLeading()</div>
+              <div class="method-args">Arguments: 0</div>
+            </div>
+            <div class="card-body">
+              <p class="method-desc">Removes all types of leading whitespace (Java 11+).</p>
+            </div>
+            <div class="card-footer">
+              <button class="example-btn">
+                <i class="fas fa-code"></i> Show Example
+              </button>
+              <pre class="example-code">String s = "  \t Hello World ";
+String stripped = s.stripLeading();
+System.out.println("'" + stripped + "'"); 
+// Output: 'Hello World '</pre>
+            </div>
+          </div>
+
+          <div class="method-card">
+            <div class="card-header">
+              <div class="method-name">stripTrailing()</div>
+              <div class="method-args">Arguments: 0</div>
+            </div>
+            <div class="card-body">
+              <p class="method-desc">Removes all types of trailing whitespace (Java 11+).</p>
+            </div>
+            <div class="card-footer">
+              <button class="example-btn">
+                <i class="fas fa-code"></i> Show Example
+              </button>
+              <pre class="example-code">String s = " Hello World \n ";
+String stripped = s.stripTrailing();
+System.out.println("'" + stripped + "'"); 
+// Output: ' Hello World'</pre>
+            </div>
+          </div>
+
+          <div class="method-card">
+            <div class="card-header">
+              <div class="method-name">stripIndent()</div>
+              <div class="method-args">Arguments: 0</div>
+            </div>
+            <div class="card-body">
+              <p class="method-desc">Removes incidental white space from each line of a multi-line string (Java 12+).</p>
+            </div>
+            <div class="card-footer">
+              <button class="example-btn">
+                <i class="fas fa-code"></i> Show Example
+              </button>
+              <pre class="example-code">String text = "  Line 1\n    Line 2\n  Line 3";
+String indented = text.stripIndent();
+System.out.println(indented); 
+// Output:
+// Line 1
+//   Line 2
+// Line 3</pre>
+            </div>
+          </div>
+        </div>
+      </section>
+
+      <!-- Joining and Formatting Section -->
+      <section class="category-section" id="joining-formatting-section">
+        <div class="section-header">
+          <div class="section-icon">
+            <i class="fas fa-link"></i>
+          </div>
+          <h2 class="section-title">Joining & Formatting Methods</h2>
+        </div>
+        
+        <div class="method-grid">
+          <div class="method-card">
+            <div class="card-header">
+              <div class="method-name">join(CharSequence delimiter, CharSequence... elements)</div>
+              <div class="method-args">Arguments: Varargs</div>
+            </div>
+            <div class="card-body">
+              <p class="method-desc">Returns a new String composed of copies of the CharSequence elements joined together with a copy of the specified delimiter (static method).</p>
+            </div>
+            <div class="card-footer">
+              <button class="example-btn">
+                <i class="fas fa-code"></i> Show Example
+              </button>
+              <pre class="example-code">String result = String.join("-", "Java", "is", "fun");
+System.out.println(result); 
+// Output: Java-is-fun</pre>
+            </div>
+          </div>
+          
+          <div class="method-card">
+            <div class="card-header">
+              <div class="method-name">join(CharSequence delimiter, Iterable&lt;? extends CharSequence&gt; elements)</div>
+              <div class="method-args">Arguments: 2</div>
+            </div>
+            <div class="card-body">
+              <p class="method-desc">Returns a new String composed of copies of the CharSequence elements joined together with a copy of the specified delimiter (static method).</p>
+            </div>
+            <div class="card-footer">
+              <button class="example-btn">
+                <i class="fas fa-code"></i> Show Example
+              </button>
+              <pre class="example-code">import java.util.Arrays;
+import java.util.List;
+List&lt;String&gt; words = Arrays.asList("hello", "world");
+String joined = String.join(" ", words);
+System.out.println(joined); 
+// Output: hello world</pre>
+            </div>
+          </div>
+
+          <div class="method-card">
+            <div class="card-header">
+              <div class="method-name">format(String format, Object... args)</div>
+              <div class="method-args">Arguments: Varargs</div>
+            </div>
+            <div class="card-body">
+              <p class="method-desc">Returns a formatted string using the format specifiers (static method).</p>
+            </div>
+            <div class="card-footer">
+              <button class="example-btn">
+                <i class="fas fa-code"></i> Show Example
+              </button>
+              <pre class="example-code">String name = "Alice";
+int age = 30;
+String formatted = String.format("Name: %s, Age: %d", name, age);
+System.out.println(formatted); 
+// Output: Name: Alice, Age: 30</pre>
+            </div>
+          </div>
+
+          <div class="method-card">
+            <div class="card-header">
+              <div class="method-name">format(Locale l, String format, Object... args)</div>
+              <div class="method-args">Arguments: Varargs</div>
+            </div>
+            <div class="card-body">
+              <p class="method-desc">Returns a formatted string with a specific locale (static method).</p>
+            </div>
+            <div class="card-footer">
+              <button class="example-btn">
+                <i class="fas fa-code"></i> Show Example
+              </button>
+              <pre class="example-code">import java.util.Locale;
+double value = 1234.56;
+String formatted = String.format(Locale.US, "Value: %,.2f", value);
+System.out.println(formatted); 
+// Output: Value: 1,234.56</pre>
+            </div>
+          </div>
+
+          <div class="method-card">
+            <div class="card-header">
+              <div class="method-name">formatted(Object... args)</div>
+              <div class="method-args">Arguments: Varargs</div>
+            </div>
+            <div class="card-body">
+              <p class="method-desc">Returns a formatted string using the format string itself (instance method added in Java 15).</p>
+            </div>
+            <div class="card-footer">
+              <button class="example-btn">
+                <i class="fas fa-code"></i> Show Example
+              </button>
+              <pre class="example-code">String template = "Hello %s, you are %d years old.";
+String result = template.formatted("Bob", 25);
+System.out.println(result); 
+// Output: Hello Bob, you are 25 years old.</pre>
+            </div>
+          </div>
+        </div>
+      </section>
+
+      <!-- Conversion and Output Section -->
+      <section class="category-section" id="conversion-output-section">
+        <div class="section-header">
+          <div class="section-icon">
+            <i class="fas fa-exchange-alt"></i>
+          </div>
+          <h2 class="section-title">Conversion & Output Methods</h2>
+        </div>
+        
+        <div class="method-grid">
+          <div class="method-card">
+            <div class="card-header">
+              <div class="method-name">toCharArray()</div>
+              <div class="method-args">Arguments: 0</div>
+            </div>
+            <div class="card-body">
+              <p class="method-desc">Converts this string to a new character array.</p>
+            </div>
+            <div class="card-footer">
+              <button class="example-btn">
+                <i class="fas fa-code"></i> Show Example
+              </button>
+              <pre class="example-code">import java.util.Arrays; // Needed for Arrays.toString()
+String s = "Java";
+char[] chars = s.toCharArray();
+System.out.println(Arrays.toString(chars)); 
+// Output: [J, a, v, a]</pre>
+            </div>
+          </div>
+
+          <div class="method-card">
+            <div class="card-header">
+              <div class="method-name">getBytes()</div>
+              <div class="method-args">Arguments: 0</div>
+            </div>
+            <div class="card-body">
+              <p class="method-desc">Encodes this String into a sequence of bytes using the platform's default charset.</p>
+            </div>
+            <div class="card-footer">
+              <button class="example-btn">
+                <i class="fas fa-code"></i> Show Example
+              </button>
+              <pre class="example-code">import java.util.Arrays;
+String s = "hello";
+byte[] bytes = s.getBytes();
+System.out.println(Arrays.toString(bytes)); 
+// Output: [104, 101, 108, 108, 111]</pre>
+            </div>
+          </div>
+
+          <div class="method-card">
+            <div class="card-header">
+              <div class="method-name">getBytes(Charset charset)</div>
+              <div class="method-args">Arguments: 1</div>
+            </div>
+            <div class="card-body">
+              <p class="method-desc">Encodes this String into a sequence of bytes using the given charset.</p>
+            </div>
+            <div class="card-footer">
+              <button class="example-btn">
+                <i class="fas fa-code"></i> Show Example
+              </button>
+              <pre class="example-code">import java.nio.charset.StandardCharsets;
+import java.util.Arrays;
+String s = "hello";
+byte[] bytes = s.getBytes(StandardCharsets.UTF_16);
+System.out.println(Arrays.toString(bytes)); 
+// Output: [-2, -1, 0, 104, 0, 101, 0, 108, 0, 108, 0, 111]</pre>
+            </div>
+          </div>
+
+          <div class="method-card">
+            <div class="card-header">
+              <div class="method-name">getBytes(String charsetName)</div>
+              <div class="method-args">Arguments: 1</div>
+            </div>
+            <div class="card-body">
+              <p class="method-desc">Encodes this String into a sequence of bytes using the named charset.</p>
+            </div>
+            <div class="card-footer">
+              <button class="example-btn">
+                <i class="fas fa-code"></i> Show Example
+              </button>
+              <pre class="example-code">import java.io.UnsupportedEncodingException;
+import java.util.Arrays;
+String s = "hello";
+try {
+    byte[] bytes = s.getBytes("UTF-8");
+    System.out.println(Arrays.toString(bytes)); 
+} catch (UnsupportedEncodingException e) {
+    e.printStackTrace();
+}
+// Output: [104, 101, 108, 108, 111]</pre>
+            </div>
+          </div>
+
+          <div class="method-card">
+            <div class="card-header">
+              <div class="method-name">getChars(int srcBegin, int srcEnd, char[] dst, int dstBegin)</div>
+              <div class="method-args">Arguments: 4</div>
+            </div>
+            <div class="card-body">
+              <p class="method-desc">Copies characters from this string into the destination character array.</p>
+            </div>
+            <div class="card-footer">
+              <button class="example-btn">
+                <i class="fas fa-code"></i> Show Example
+              </button>
+              <pre class="example-code">import java.util.Arrays;
+String s = "abcdef";
+char[] dest = new char[10];
+s.getChars(1, 4, dest, 0); // Copies 'bcd' from s to dest starting at index 0
+System.out.println(Arrays.toString(dest)); 
+// Output: [b, c, d, , , , , , , ]</pre>
+            </div>
+          </div>
+
+          <div class="method-card">
+            <div class="card-header">
+              <div class="method-name">toString()</div>
+              <div class="method-args">Arguments: 0</div>
+            </div>
+            <div class="card-body">
+              <p class="method-desc">Returns the string itself. Useful when overriding `toString()` in custom classes.</p>
+            </div>
+            <div class="card-footer">
+              <button class="example-btn">
+                <i class="fas fa-code"></i> Show Example
+              </button>
+              <pre class="example-code">String s = "example";
+String result = s.toString();
+System.out.println(result); 
+// Output: example</pre>
+            </div>
+          </div>
+
+          <!-- Static ValueOf methods -->
+          <div class="method-card">
+            <div class="card-header">
+              <div class="method-name">valueOf(boolean b)</div>
+              <div class="method-args">Arguments: 1 (boolean)</div>
+            </div>
+            <div class="card-body">
+              <p class="method-desc">Converts a boolean value to its string representation.</p>
+            </div>
+            <div class="card-footer">
+              <button class="example-btn">
+                <i class="fas fa-code"></i> Show Example
+              </button>
+              <pre class="example-code">String s = String.valueOf(true);
+System.out.println(s); 
+// Output: "true"</pre>
+            </div>
+          </div>
+
+          <div class="method-card">
+            <div class="card-header">
+              <div class="method-name">valueOf(char c)</div>
+              <div class="method-args">Arguments: 1 (char)</div>
+            </div>
+            <div class="card-body">
+              <p class="method-desc">Converts a character to its string representation.</p>
+            </div>
+            <div class="card-footer">
+              <button class="example-btn">
+                <i class="fas fa-code"></i> Show Example
+              </button>
+              <pre class="example-code">String s = String.valueOf('X');
+System.out.println(s); 
+// Output: "X"</pre>
+            </div>
+          </div>
+
+          <div class="method-card">
+            <div class="card-header">
+              <div class="method-name">valueOf(char[] data)</div>
+              <div class="method-args">Arguments: 1 (char[])</div>
+            </div>
+            <div class="card-body">
+              <p class="method-desc">Converts a character array to its string representation.</p>
+            </div>
+            <div class="card-footer">
+              <button class="example-btn">
+                <i class="fas fa-code"></i> Show Example
+              </button>
+              <pre class="example-code">char[] data = {'a', 'b', 'c'};
+String s = String.valueOf(data);
+System.out.println(s); 
+// Output: "abc"</pre>
+            </div>
+          </div>
+
+          <div class="method-card">
+            <div class="card-header">
+              <div class="method-name">valueOf(char[] data, int offset, int count)</div>
+              <div class="method-args">Arguments: 3 (char[], int, int)</div>
+            </div>
+            <div class="card-body">
+              <p class="method-desc">Converts a subarray of a character array to its string representation.</p>
+            </div>
+            <div class="card-footer">
+              <button class="example-btn">
+                <i class="fas fa-code"></i> Show Example
+              </button>
+              <pre class="example-code">char[] data = {'x', 'y', 'z', 'w'};
+String s = String.valueOf(data, 1, 2); // 'y', 'z'
+System.out.println(s); 
+// Output: "yz"</pre>
+            </div>
+          </div>
+
+          <div class="method-card">
+            <div class="card-header">
+              <div class="method-name">valueOf(double d)</div>
+              <div class="method-args">Arguments: 1 (double)</div>
+            </div>
+            <div class="card-body">
+              <p class="method-desc">Converts a double value to its string representation.</p>
+            </div>
+            <div class="card-footer">
+              <button class="example-btn">
+                <i class="fas fa-code"></i> Show Example
+              </button>
+              <pre class="example-code">String s = String.valueOf(3.14);
+System.out.println(s); 
+// Output: "3.14"</pre>
+            </div>
+          </div>
+
+          <div class="method-card">
+            <div class="card-header">
+              <div class="method-name">valueOf(float f)</div>
+              <div class="method-args">Arguments: 1 (float)</div>
+            </div>
+            <div class="card-body">
+              <p class="method-desc">Converts a float value to its string representation.</p>
+            </div>
+            <div class="card-footer">
+              <button class="example-btn">
+                <i class="fas fa-code"></i> Show Example
+              </button>
+              <pre class="example-code">String s = String.valueOf(1.23f);
+System.out.println(s); 
+// Output: "1.23"</pre>
+            </div>
+          </div>
+
+          <div class="method-card">
+            <div class="card-header">
+              <div class="method-name">valueOf(int i)</div>
+              <div class="method-args">Arguments: 1 (int)</div>
+            </div>
+            <div class="card-body">
+              <p class="method-desc">Converts an int value to its string representation.</p>
+            </div>
+            <div class="card-footer">
+              <button class="example-btn">
+                <i class="fas fa-code"></i> Show Example
+              </button>
+              <pre class="example-code">String s = String.valueOf(100);
+System.out.println(s); 
+// Output: "100"</pre>
+            </div>
+          </div>
+
+          <div class="method-card">
+            <div class="card-header">
+              <div class="method-name">valueOf(long l)</div>
+              <div class="method-args">Arguments: 1 (long)</div>
+            </div>
+            <div class="card-body">
+              <p class="method-desc">Converts a long value to its string representation.</p>
+            </div>
+            <div class="card-footer">
+              <button class="example-btn">
+                <i class="fas fa-code"></i> Show Example
+              </button>
+              <pre class="example-code">String s = String.valueOf(123456789L);
+System.out.println(s); 
+// Output: "123456789"</pre>
+            </div>
+          </div>
+
+          <div class="method-card">
+            <div class="card-header">
+              <div class="method-name">valueOf(Object obj)</div>
+              <div class="method-args">Arguments: 1 (Object)</div>
+            </div>
+            <div class="card-body">
+              <p class="method-desc">Converts an object to its string representation (calls `obj.toString()`).</p>
+            </div>
+            <div class="card-footer">
+              <button class="example-btn">
+                <i class="fas fa-code"></i> Show Example
+              </button>
+              <pre class="example-code">Object obj = new Integer(5);
+String s = String.valueOf(obj);
+System.out.println(s); 
+// Output: "5"</pre>
+            </div>
+          </div>
+        </div>
+      </section>
+
+      <!-- Utility and Advanced Section -->
+      <section class="category-section" id="utility-advanced-section">
+        <div class="section-header">
+          <div class="section-icon">
+            <i class="fas fa-tools"></i>
+          </div>
+          <h2 class="section-title">Utility & Advanced Methods</h2>
+        </div>
+        
+        <div class="method-grid">
+          <div class="method-card">
+            <div class="card-header">
+              <div class="method-name">lines()</div>
+              <div class="method-args">Arguments: 0</div>
+            </div>
+            <div class="card-body">
+              <p class="method-desc">Returns a stream of lines extracted from the string (Java 11+).</p>
+            </div>
+            <div class="card-footer">
+              <button class="example-btn">
+                <i class="fas fa-code"></i> Show Example
+              </button>
+              <pre class="example-code">import java.util.stream.Collectors;
+String multiLine = "Line1\nLine2\r\nLine3";
+String result = multiLine.lines().collect(Collectors.joining(" | "));
+System.out.println(result); 
+// Output: Line1 | Line2 | Line3</pre>
+            </div>
+          </div>
+
+          <div class="method-card">
+            <div class="card-header">
+              <div class="method-name">hashCode()</div>
+              <div class="method-args">Arguments: 0</div>
+            </div>
+            <div class="card-body">
+              <p class="method-desc">Returns the hash code for the string.</p>
+            </div>
+            <div class="card-footer">
+              <button class="example-btn">
+                <i class="fas fa-code"></i> Show Example
+              </button>
+              <pre class="example-code">String s = "Java";
+System.out.println(s.hashCode()); 
+// Output: 2301506</pre>
+            </div>
+          </div>
+
+          <div class="method-card">
+            <div class="card-header">
+              <div class="method-name">intern()</div>
+              <div class="method-args">Arguments: 0</div>
+            </div>
+            <div class="card-body">
+              <p class="method-desc">Returns a canonical representation for the string object. It returns a string from the string constant pool.</p>
+            </div>
+            <div class="card-footer">
+              <button class="example-btn">
+                <i class="fas fa-code"></i> Show Example
+              </button>
+              <pre class="example-code">String s1 = new String("hello");
+String s2 = "hello";
+String s3 = s1.intern();
+System.out.println(s1 == s2); 
+// Output: false
+System.out.println(s2 == s3); 
+// Output: true</pre>
+            </div>
+          </div>
+
+          <div class="method-card">
+            <div class="card-header">
+              <div class="method-name">repeat(int count)</div>
+              <div class="method-args">Arguments: 1</div>
+            </div>
+            <div class="card-body">
+              <p class="method-desc">Returns a String whose value is the concatenation of this string repeated `count` times (Java 11+).</p>
+            </div>
+            <div class="card-footer">
+              <button class="example-btn">
+                <i class="fas fa-code"></i> Show Example
+              </button>
+              <pre class="example-code">String s = "abc";
+String repeated = s.repeat(3);
+System.out.println(repeated); 
+// Output: abcabcabc</pre>
+            </div>
+          </div>
+
+          <div class="method-card">
+            <div class="card-header">
+              <div class="method-name">indent(int n)</div>
+              <div class="method-args">Arguments: 1</div>
+            </div>
+            <div class="card-body">
+              <p class="method-desc">Adjusts the indentation of every line in this string (positive adds spaces, negative removes) (Java 12+).</p>
+            </div>
+            <div class="card-footer">
+              <button class="example-btn">
+                <i class="fas fa-code"></i> Show Example
+              </button>
+              <pre class="example-code">String text = "Line 1\nLine 2";
+String indented = text.indent(4);
+System.out.println(indented); 
+// Output:
+//     Line 1
+//     Line 2</pre>
+            </div>
+          </div>
+
+          <div class="method-card">
+            <div class="card-header">
+              <div class="method-name">describeConstable()</div>
+              <div class="method-args">Arguments: 0</div>
+            </div>
+            <div class="card-body">
+              <p class="method-desc">Returns an `Optional` describing this string constant, if it is a constant (Java 12+).</p>
+            </div>
+            <div class="card-footer">
+              <button class="example-btn">
+                <i class="fas fa-code"></i> Show Example
+              </button>
+              <pre class="example-code">import java.util.Optional;
+import java.lang.constant.Constable;
+String s = "Hello";
+Optional&lt;Constable&gt; constableDesc = s.describeConstable();
+System.out.println(constableDesc); 
+// Output: Optional[ConstableDesc[String[Hello]]]</pre>
+            </div>
+          </div>
+
+          <div class="method-card">
+            <div class="card-header">
+              <div class="method-name">resolveConstantDesc(MethodHandles.Lookup lookup)</div>
+              <div class="method-args">Arguments: 1</div>
+            </div>
+            <div class="card-body">
+              <p class="method-desc">Resolves this constant descriptor to a string constant (advanced use, Java 12+).</p>
+            </div>
+            <div class="card-footer">
+              <button class="example-btn">
+                <i class="fas fa-code"></i> Show Example
+              </button>
+              <pre class="example-code">/*
+// This method is for advanced use with MethodHandles.
+// Example requires more setup for MethodHandles.Lookup and security manager.
+// It's generally not used in typical application code.
+import java.lang.invoke.MethodHandles;
+import java.lang.constant.Constable;
+import java.util.Optional;
+
+String s = "Test";
+Optional&lt;Constable&gt; constableDesc = s.describeConstable();
+if (constableDesc.isPresent()) {
+    try {
+        MethodHandles.Lookup lookup = MethodHandles.lookup();
+        String resolved = (String) constableDesc.get().resolveConstantDesc(lookup);
+        System.out.println(resolved);
+    } catch (ReflectiveOperationException e) {
+        e.printStackTrace();
+    }
+}
+*/
+System.out.println("This method requires advanced setup.");</pre>
+            </div>
+          </div>
+
+          <div class="method-card">
+            <div class="card-header">
+              <div class="method-name">translateEscapes()</div>
+              <div class="method-args">Arguments: 0</div>
+            </div>
+            <div class="card-body">
+              <p class="method-desc">Returns a string with escape sequences translated (Java 15+).</p>
+            </div>
+            <div class="card-footer">
+              <button class="example-btn">
+                <i class="fas fa-code"></i> Show Example
+              </button>
+              <pre class="example-code">String escaped = "Hello\\nWorld\\t!";
+String translated = escaped.translateEscapes();
+System.out.println(translated); 
+// Output:
+// Hello
+// World	!</pre>
+            </div>
+          </div>
+        </div>
+      </section>
+    </main>
+  </div>
+
+  <footer class="footer">
+    <p>Java String Methods Cheat Sheet | Includes methods from Java 8 to Java 17</p>
+    <p>Tip: Click on any example button to see the code implementation</p>
+    <p class="highlight">Designed with modern UI principles for better developer experience</p>
+  </footer>
+
+  <script>
+    // Theme toggle functionality
+    const themeBtn = document.getElementById('themeBtn');
+    themeBtn.addEventListener('click', toggleTheme);
+    
+    function toggleTheme() {
+      document.body.classList.toggle('dark-mode');
+      if (document.body.classList.contains('dark-mode')) {
+        themeBtn.innerHTML = '<i class="fas fa-sun"></i>'; // Changed to icon only
+        themeBtn.setAttribute('aria-label', 'Toggle light mode');
+      } else {
+        themeBtn.innerHTML = '<i class="fas fa-moon"></i>'; // Changed to icon only
+        themeBtn.setAttribute('aria-label', 'Toggle dark mode');
+      }
+    }
+    
+    // Example toggle functionality (no category navigation needed anymore)
+    const exampleBtns = document.querySelectorAll('.example-btn');
+    exampleBtns.forEach(btn => {
+      btn.addEventListener('click', () => {
+        const exampleCode = btn.nextElementSibling;
+        const isActive = exampleCode.classList.contains('active');
+        
+        // Close all other examples
+        document.querySelectorAll('.example-code').forEach(code => {
+          code.classList.remove('active');
+        });
+        
+        // Toggle current example
+        exampleCode.classList.toggle('active', !isActive);
+        
+        // Scroll to the example if opening
+        if (!isActive) {
+          exampleCode.scrollIntoView({ behavior: 'smooth', block: 'nearest' });
+        }
+      });
+    });
+
+    // Initialize theme button icon based on current theme
+    if (document.body.classList.contains('dark-mode')) {
+      themeBtn.innerHTML = '<i class="fas fa-sun"></i>';
+      themeBtn.setAttribute('aria-label', 'Toggle light mode');
+    } else {
+      themeBtn.innerHTML = '<i class="fas fa-moon"></i>';
+      themeBtn.setAttribute('aria-label', 'Toggle dark mode');
+    }
+  </script>
+</body>
+</html>
